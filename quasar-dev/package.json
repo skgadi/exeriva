@@ -2,7 +2,7 @@
   "name": "exeriva",
   "version": "0.0.1",
   "private": true,
-  "description": "A Quasar Project",
+  "description": "This tool allows the students to practice the exercises while allows the teachers to create and manage the exercises.",
   "keywords": [
     "quasar",
     "quasar-app",
