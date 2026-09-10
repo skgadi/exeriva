@@ -6,18 +6,30 @@
           flat
           dense
           round
-          icon="menu"
+          :icon="appSettings.isSideBarOpen ? 'mdi-menu-open' : 'mdi-menu'"
           aria-label="Menu"
-          @click="toggleLeftDrawer"
+          @click="appSettings.toggleSideBar"
         />
         <q-toolbar-title> Exeriva </q-toolbar-title>
+        <q-btn flat dense round aria-label="Settings">
+          <q-avatar
+            v-if="usersStore.selectedUser"
+            size="32px"
+            color="white"
+            text-color="primary"
+          >
+            {{ usersStore.getInitialsOfSelectedUser() }}
+          </q-avatar>
+          <q-icon v-else name="mdi-account-off-outline" />
+          <q-menu>
+            <pick-user />
+          </q-menu>
+        </q-btn>
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-      <q-list>
-        <q-item-label header> Essential Links </q-item-label>
-      </q-list>
+    <q-drawer v-model="appSettings.isSideBarOpen" bordered>
+      <main-side-bar />
     </q-drawer>
 
     <q-page-container>
@@ -27,11 +39,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import MainSideBar from "@/components/SideBar/MainComponent.vue";
+import PickUser from "@/components/SideBar/UserPicker.vue";
 
-const leftDrawerOpen = ref(false);
+import { useAppSettingsStore } from "@/stores/app-settings";
+import { useUsersStore } from "@/stores/users-settings";
 
-function toggleLeftDrawer() {
-  leftDrawerOpen.value = !leftDrawerOpen.value;
-}
+const appSettings = useAppSettingsStore();
+const usersStore = useUsersStore();
 </script>
