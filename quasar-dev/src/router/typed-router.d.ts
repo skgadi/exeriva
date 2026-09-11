@@ -38,6 +38,7 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | '//(index)'
       | '//questions/[[qid]]'
+      | '//questions/new-question'
       | '//second'
     >,
     '//(index)': RouteRecordInfo<
@@ -52,6 +53,13 @@ declare module 'vue-router/auto-routes' {
       '/questions/:qid?',
       { qid?: ParamValueZeroOrOne<true> },
       { qid?: ParamValueZeroOrOne<false> },
+      | never
+    >,
+    '//questions/new-question': RouteRecordInfo<
+      '//questions/new-question',
+      '/questions/new-question',
+      Record<never, never>,
+      Record<never, never>,
       | never
     >,
     '//second': RouteRecordInfo<
@@ -86,6 +94,7 @@ declare module 'vue-router/auto-routes' {
         | '/'
         | '//(index)'
         | '//questions/[[qid]]'
+        | '//questions/new-question'
         | '//second'
       views:
         | 'default'
@@ -107,6 +116,14 @@ declare module 'vue-router/auto-routes' {
         | never
       pathParamNames:
         | 'qid'
+    }
+    'src/pages/index/questions/new-question.vue': {
+      routes:
+        | '//questions/new-question'
+      views:
+        | never
+      pathParamNames:
+        | never
     }
     'src/pages/index/second.vue': {
       routes:

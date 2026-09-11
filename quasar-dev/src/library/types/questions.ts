@@ -11,11 +11,13 @@ export interface GSK_QUESTION_PAPER_DRAFT {
   editPassword: string;
   answerPassword: string;
   solutionPassword: string;
-  header: GSK_DRAFT_ELEMENT[];
-  questions: GSK_DRAFT_ELEMENT[];
-  answers: GSK_DRAFT_ELEMENT_FOR_ANSWER[];
-  solution: GSK_DRAFT_ELEMENT[];
-  footer: GSK_DRAFT_ELEMENT[];
+  header: GSK_DRAFT_ELEMENT;
+  questions: {
+    question: GSK_DRAFT_ELEMENT;
+    answers: GSK_DRAFT_ELEMENT_FOR_ANSWER;
+    solution: GSK_DRAFT_ELEMENT;
+  }[];
+  footer: GSK_DRAFT_ELEMENT;
 }
 
 export interface GSK_DRAFT_ELEMENT {

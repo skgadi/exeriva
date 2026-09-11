@@ -1,10 +1,11 @@
 <template>
   <q-input
+    class="q-my-xs"
     v-model="rawFilter"
     dense
     outlined
     rounded
-    placeholder="Search users..."
+    placeholder="Search users or add new"
   >
     <template v-slot:before>
       <q-icon class="q-ml-xs" name="mdi-magnify" slot="prepend" />
@@ -21,7 +22,7 @@
       />
     </template>
   </q-input>
-  <q-list bordered v-if="filteredUsers.length > 0" dense>
+  <q-list bordered v-if="filteredUsers.length > 0">
     <q-item v-for="(user, index) in filteredUsers" :key="user">
       <q-item-section>
         <q-item-label>{{ user }}</q-item-label>
