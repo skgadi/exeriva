@@ -10,14 +10,12 @@ export const useQuestionsStore = defineStore("questions", {
 
   getters: {
     getQuestionpaperDisplay: (state) => {
-      
+      return JSON.stringify(state.questionPaperDrafts);
     },
   },
 
   actions: {
-    toggleSideBar() {
-      this.isSideBarOpen = !this.isSideBarOpen;
-    },
+
   },
 });
 

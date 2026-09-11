@@ -6,6 +6,8 @@ import type {
 
 export interface GSK_QUESTION_PAPER_DRAFT {
   id: string;
+  title: string;
+  shortTitle: string;
   editPassword: string;
   answerPassword: string;
   solutionPassword: string;
@@ -29,6 +31,8 @@ export interface GSK_DRAFT_ELEMENT_FOR_ANSWER extends GSK_DRAFT_ELEMENT {
 
 export interface GSK_QUESTION_PAPER_DISPLAY {
   id: string;
+  title: string;
+  shortTitle: string;
   header: string;
   elements: {
     question: string;
@@ -60,6 +64,8 @@ export interface GSK_INPUT_ELEMENT {
 
 export interface GSK_QUESTION_PAPER_ANSWER_INPUT {
   id: string;
+  title: string;
+  shortTitle: string;
   header: string;
   elements: {
     question: string;
