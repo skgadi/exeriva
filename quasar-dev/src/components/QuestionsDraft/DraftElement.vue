@@ -10,12 +10,41 @@
     expand-icon-class="text-white"
     default-opened
   >
+
+  <q-tabs
+        v-model="tab"
+        dense
+        class="text-grey"
+        active-color="primary"
+        indicator-color="primary"
+        align="justify"
+        narrow-indicator
+      >
+        <q-tab no-caps name="draft" label="Draft"/>
+        <q-tab no-caps name="variables" label="Variables"/>
+        <q-tab no-caps name="preview" label="Preview"/>
+      </q-tabs>
+
+      <q-separator />
+
+      <q-tab-panels v-model="tab" animated>
+        <q-tab-panel name="draft" class="q-pa-none">
+          <editor-box v-model="draftElement.text" />
+        </q-tab-panel>
+
+        <q-tab-panel name="variables">
+          <div class="text-h6">variables</div>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit.
+        </q-tab-panel>
+
+        <q-tab-panel name="preview" >
+          <viewer-box :draft-text="draftElement.text" />
+        </q-tab-panel>
+      </q-tab-panels>
     <q-splitter v-model="splitterModel">
       <template v-slot:before>
-        <editor-box v-model="draftElement.text" />
       </template>
       <template v-slot:after>
-        <viewer-box :draft-text="draftElement.text" />
       </template>
     </q-splitter>
   </q-expansion-item>
@@ -41,6 +70,7 @@ import { ref } from "vue";
 import type { GSK_DRAFT_ELEMENT } from "@/library/types/questions";
 
 const splitterModel = ref(50);
+const tab = ref("draft");
 
 const colorLabelLookup = {
   header: {
