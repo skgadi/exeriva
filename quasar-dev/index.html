@@ -11,10 +11,24 @@
       name="viewport"
       content="width=device-width, initial-scale=1<% if (ctx.mode.cordova || ctx.mode.capacitor) { %>, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover<% } %>"
     />
-    <meta
+    <!-- commented to accommodate TikzJax -->
+
+    <!--meta
       http-equiv="Content-Security-Policy"
       content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';<% if (ctx.dev) { %> connect-src 'self' ws://localhost:*; worker-src 'self' blob:;<% } %>"
-    />
+    /-->
+
+
+
+    <!-- TikzJax started -->
+     <meta 
+        http-equiv="Content-Security-Policy" 
+        content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'unsafe-inline' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline';"
+      >
+     <link rel="stylesheet" href="/tikzjax/prepared/dist/fonts.min.css">
+      <script src="/tikzjax/prepared/dist/tikzjax.min.js" data-tikzjax-hw-path="/tikzjax/"></script>
+     <!-- TikzJax ended -->
+
 
     <link
       rel="icon"
