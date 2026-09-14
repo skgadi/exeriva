@@ -24,11 +24,15 @@
     "postinstall": "quasar prepare --silent"
   },
   "dependencies": {
+    "@codemirror/lang-markdown": "^6.5.2",
+    "@codemirror/view": "^6.43.11",
     "@quasar/extras": "^2.0.4",
+    "codemirror": "^6.0.2",
     "pinia": "^4.0.2",
     "pinia-plugin-persistedstate": "^4.7.1",
     "quasar": "^2.29.0",
     "vue": "^3.5.22",
+    "vue-codemirror": "^6.1.1",
     "vue-i18n": "^11.3.0",
     "vue-router": "^5.0.6"
   },

@@ -4,10 +4,13 @@ export const useAppSettingsStore = defineStore("appSettings", {
   persist: true,
   state: () => ({
     isSideBarOpen: false,
+    pinPreview: true,
+    pinnedPreviewSize: 50,
   }),
 
   getters: {
     isSideBarClosed: (state) => !state.isSideBarOpen,
+
   },
 
   actions: {
@@ -15,6 +18,7 @@ export const useAppSettingsStore = defineStore("appSettings", {
       this.isSideBarOpen = !this.isSideBarOpen;
     },
   },
+
 });
 
 if (import.meta.hot) {
