@@ -6,7 +6,6 @@
     :header-class="
       colorLabelLookup[props.section]?.headerClass || 'bg-grey-3 text-black'
     "
-    expand-icon-class="text-white"
     default-opened
     hide-expand-icon
     v-model="isExpanded"
@@ -102,8 +101,7 @@
             </q-tab-panel>
 
             <q-tab-panel name="variables" style="height: 100%">
-              <div class="text-h6">variables</div>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              <edit-variables-box v-model="draftElement" />
             </q-tab-panel>
 
             <q-tab-panel name="preview">
@@ -116,57 +114,6 @@
         </template>
       </q-splitter>
     </div>
-    <!--q-splitter v-model="appSettingsStore.splitterPosition" :limits="[20, 80]">
-      <template v-slot:before>
-        <q-tabs
-          v-model="tab"
-          dense
-          class="text-grey"
-          active-color="primary"
-          indicator-color="primary"
-          align="justify"
-          narrow-indicator
-        >
-          <q-tab no-caps name="draft" label="Draft" />
-          <q-tab no-caps name="variables" label="Variables" />
-          <q-tab no-caps name="preview" label="Preview" />
-          <q-btn
-            dense
-            round
-            no-caps
-            flat
-            :title="
-              appSettingsStore.showSplitter ? 'Hide Splitter' : 'Show Splitter'
-            "
-            :icon="
-              appSettingsStore.isSideBarOpen ? 'mdi-menu-open' : 'mdi-menu'
-            "
-            @click="
-              appSettingsStore.showSplitter = !appSettingsStore.showSplitter
-            "
-          />
-        </q-tabs>
-
-        <q-separator />
-        <q-tab-panels v-model="tab" animated style="height: 50vh">
-          <q-tab-panel name="draft" class="q-pa-none" style="height: 100%">
-            <editor-box v-model="draftElement.text" />
-          </q-tab-panel>
-
-          <q-tab-panel name="variables" style="height: 100%">
-            <div class="text-h6">variables</div>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
-          </q-tab-panel>
-
-          <q-tab-panel name="preview">
-            <viewer-box :draft-text="draftElement.text" />
-          </q-tab-panel>
-        </q-tab-panels>
-      </template>
-      <template v-slot:after>
-        <viewer-box :draft-text="draftElement.text" />
-      </template>
-    </q-splitter-->
   </q-expansion-item>
 </template>
 
@@ -185,6 +132,7 @@ const draftElement = defineModel({
 
 import EditorBox from "@/components/QuestionsDraft/EditorBox.vue";
 import viewerBox from "@/components/QuestionsDraft/ViewerBox.vue";
+import EditVariablesBox from "@/components/QuestionsDraft/EditVariablesBox.vue";
 
 import { ref, watch } from "vue";
 import type { GSK_DRAFT_ELEMENT } from "@/library/types/questions";

@@ -1,11 +1,11 @@
 <template>
   <div ref="content" class="q-px-xs">
-    <q-markdown :src="draftText" />
+    <q-markdown :src="contentToDisplay" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { nextTick, ref, watch } from "vue";
+import { computed, nextTick, ref, watch } from "vue";
 
 import { QMarkdown } from "@quasar/quasar-ui-qmarkdown";
 import "@quasar/quasar-ui-qmarkdown/dist/index.css";
@@ -46,5 +46,8 @@ const renderMath = async () => {
   });
 };
 
-watch(() => props.draftText, renderMath, { immediate: true });
+const contentToDisplay = computed(() => {
+  renderMath();
+  return props.draftText || "No content to display";
+});
 </script>
