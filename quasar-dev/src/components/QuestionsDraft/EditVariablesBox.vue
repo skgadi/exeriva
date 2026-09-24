@@ -1,52 +1,72 @@
 <template>
-  <template v-for="(item, idx) in draftElement.variables" :key="idx">
-    <q-card class="q-mb-sm" v-if="draftElement.variables[idx] !== undefined">
-      <q-bar dense>
-        <div class="text-weight-bold"> #{{ item.name }} </div>
-        <q-space />
-        <q-btn dense flat :label="item.type" class="q-mr-sm" align="right">
-          <q-menu>
-            <q-list dense separator>
-              <q-item clickable v-close-popup @click="item.type = 'number'">
-                <q-item-section>Number</q-item-section>
-              </q-item>
-              <q-item clickable v-close-popup @click="item.type = 'string'">
-                <q-item-section>String</q-item-section>
-              </q-item>
-              <q-item clickable v-close-popup @click="item.type = 'date-time'">
-                <q-item-section>Date-Time</q-item-section>
-              </q-item>
-            </q-list>
-          </q-menu>
-        </q-btn>
-        <q-btn
-          dense
-          flat
-          round
-          icon="mdi-menu-up-outline"
-          :disabled="idx === 0"
-          @click="moveVariable(idx, -1)"
-          title="Move variable up"
+  <div class="q-pa-xs">
+    <template v-for="(item, idx) in draftElement.variables" :key="idx">
+      <q-card class="q-mb-sm" v-if="draftElement.variables[idx] !== undefined">
+        <q-bar dense>
+          <div class="text-weight-bold"> #{{ item.name }} </div>
+          <q-space />
+          <q-btn dense flat :label="item.type" class="q-mr-sm" align="right">
+            <q-menu>
+              <q-list dense separator>
+                <q-item clickable v-close-popup @click="item.type = 'number'">
+                  <q-item-section>Number</q-item-section>
+                </q-item>
+                <q-item clickable v-close-popup @click="item.type = 'string'">
+                  <q-item-section>String</q-item-section>
+                </q-item>
+                <q-item
+                  clickable
+                  v-close-popup
+                  @click="item.type = 'date-time'"
+                >
+                  <q-item-section>Date-Time</q-item-section>
+                </q-item>
+                <q-item
+                  clickable
+                  v-close-popup
+                  @click="item.type = 'expression'"
+                >
+                  <q-item-section>Expression</q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
+          <q-btn
+            dense
+            flat
+            round
+            icon="mdi-menu-up-outline"
+            :disabled="idx === 0"
+            @click="moveVariable(idx, -1)"
+            title="Move variable up"
+          />
+          <q-btn
+            dense
+            flat
+            round
+            icon="mdi-menu-down-outline"
+            :disabled="idx === draftElement.variables.length - 1"
+            @click="moveVariable(idx, 1)"
+            title="Move variable down"
+          />
+        </q-bar>
+        <div
+          v-if="draftElement.variables[idx]?.type != 'expression'"
+          class="q-py-xs"
+        >
+          <common-editor v-model="draftElement.variables[idx]" />
+        </div>
+        <type-number
+          v-if="draftElement.variables[idx]?.type === 'number'"
+          v-model="draftElement.variables[idx]"
         />
-        <q-btn
-          dense
-          flat
-          round
-          icon="mdi-menu-down-outline"
-          :disabled="idx === draftElement.variables.length - 1"
-          @click="moveVariable(idx, 1)"
-          title="Move variable down"
+        <type-expression
+          v-if="draftElement.variables[idx]?.type === 'expression'"
+          v-model="draftElement.variables[idx]"
         />
-      </q-bar>
-      <div class="q-py-xs">
-        <common-editor v-model="draftElement.variables[idx]" />
-      </div>
-      <type-number
-        v-if="draftElement.variables[idx]?.type === 'number'"
-        v-model="draftElement.variables[idx]"
-      />
-    </q-card>
-  </template>
+      </q-card>
+    </template>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -57,6 +77,7 @@ const draftElement = defineModel({
 
 import CommonEditor from "@/components/QuestionsDraft/Variables/CommonEditor.vue";
 import TypeNumber from "@/components/QuestionsDraft/Variables/TypeNumberEditor.vue";
+import TypeExpression from "@/components/QuestionsDraft/Variables/TypeExpressionEditor.vue";
 
 import { watch } from "vue";
 import type { GSK_DRAFT_ELEMENT } from "@/library/types/questions";

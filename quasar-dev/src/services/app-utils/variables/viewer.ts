@@ -11,14 +11,6 @@ const displayNumber = (
     case "decimal": {
       if (isImaginary) {
         const valueToDisplay = math.abs(math.round(value, type.roundTo));
-        console.log(
-          "Displaying imaginary value:",
-          value,
-          "for type:",
-          type,
-          "valueToDisplay:",
-          valueToDisplay,
-        );
         const sign = math.smaller(value, 0) ? "-" : "+";
         if (valueToDisplay === 0) {
           return "";
@@ -111,14 +103,6 @@ const displayNumber = (
         if (valueToDisplay === 1) {
           return `${sign}i`;
         }
-        console.log(
-          "Displaying imaginary value in scientific notation:",
-          value,
-          "for type:",
-          type,
-          "valueToDisplay:",
-          valueToDisplay,
-        );
         return `${sign}i${math
           .format(valueToDisplay, { notation: "exponential" })
           .replace(/e[+-]0+$/i, "")
@@ -141,12 +125,6 @@ export const displayVariable = (inVariable: GSK_VARIABLE_NUMBER) => {
     const valuesToDisplay = math.map(
       inVariable.variableValue,
       (value: math.MathNumericType) => {
-        console.log(
-          "Displaying value:",
-          value,
-          "for variable:",
-          inVariable.name,
-        );
         //return value.toString(2); // Display the value with 2 decimal places
         // if it is complex number, seperate the real and imaginary part and display them separately
         if (math.isComplex(value)) {

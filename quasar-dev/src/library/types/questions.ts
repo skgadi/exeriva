@@ -2,6 +2,7 @@ import type {
   GSK_VARIABLE_NUMBER,
   GSK_VARIABLE_STRING,
   GSK_VARIABLE_DATE_TIME,
+  GSK_VARIABLE_EXPRESSION,
 } from "./variables";
 
 export interface GSK_QUESTION_PAPER_DRAFT {
@@ -23,7 +24,10 @@ export interface GSK_QUESTION_PAPER_DRAFT {
 export interface GSK_DRAFT_ELEMENT {
   text: string;
   variables: Array<
-    GSK_VARIABLE_NUMBER | GSK_VARIABLE_STRING | GSK_VARIABLE_DATE_TIME
+    | GSK_VARIABLE_NUMBER
+    | GSK_VARIABLE_STRING
+    | GSK_VARIABLE_DATE_TIME
+    | GSK_VARIABLE_EXPRESSION
   >;
 }
 

@@ -39,3 +39,13 @@ export interface GSK_VARIABLE_DATE_TIME {
   format: string;
   size: [number, number]; // [rows, columns] for matrix, [1, 1] for scalar
 }
+
+// A mathematical expression with numerical values as output upon evaulated
+export interface GSK_VARIABLE_EXPRESSION {
+  type: "expression";
+  name: string;
+  expression: string;
+  variableValue: Matrix; // a mathjs representation of the variable value
+  variableDisplayValue: string; // a LaTeX representation of the variableValue
+  size: [number, number]; // This will be calculated based on the expression
+}

@@ -15,8 +15,8 @@
   <div>
     <q-checkbox v-model="variable.isComplex" label="Is it a complex number?" />
   </div>
-  <div ref="texContent">
-    Example Value: ${{ variable.variableDisplayValue }}$
+  <div ref="texContent" class="q-pa-md">
+    <display-tex :tex-content="`$${variable.variableDisplayValue}$`" />
   </div>
 </template>
 
@@ -27,9 +27,9 @@ const variable = defineModel({
 });
 
 import NumberDetailsEditor from "@/components/QuestionsDraft/Variables/NumberDetailsEditor.vue";
+import DisplayTex from "@/components/ExtrasForQuasar/DisplayTex.vue";
 
 import { watch } from "vue";
-//import { displayVariable } from "@/services/app-utils/variables/viewer";
 import { generateRandomNumber } from "@/services/app-utils/variables/generator";
 import type { GSK_VARIABLE_NUMBER } from "@/library/types/variables";
 
@@ -44,42 +44,7 @@ watch(
   ],
   () => {
     generateRandomNumber(variable.value);
-    renderMath();
   },
   { deep: true }
 );
-
-import "katex/dist/katex.min.css";
-import renderMathInElement from "katex/contrib/auto-render";
-import { nextTick, ref, onMounted } from "vue";
-
-const texContent = ref<HTMLElement | null>(null);
-
-const renderMath = async () => {
-  await nextTick();
-
-  if (!texContent.value) {
-    return;
-  }
-
-  renderMathInElement(texContent.value, {
-    delimiters: [
-      {
-        left: "$$",
-        right: "$$",
-        display: true
-      },
-      {
-        left: "$",
-        right: "$",
-        display: false
-      }
-    ],
-    throwOnError: false
-  });
-};
-
-onMounted(() => {
-  renderMath();
-});
 </script>
