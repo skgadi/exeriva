@@ -60,11 +60,9 @@ import TypeNumber from "@/components/QuestionsDraft/Variables/TypeNumberEditor.v
 
 import { watch } from "vue";
 import type { GSK_DRAFT_ELEMENT } from "@/library/types/questions";
-import type {
-  GSK_VARIABLE_NUMBER,
-  GSK_VARIABLE_STRING
-} from "@/library/types/variables";
-import { extractVariablesFromText } from "@/services/app-utils/questions/variables";
+import type { GSK_VARIABLE_NUMBER } from "@/library/types/variables";
+import { extractVariablesFromText } from "@/services/app-utils/variables/generator";
+import * as math from "mathjs";
 
 watch(
   () => draftElement.value,
@@ -102,7 +100,9 @@ watch(
               showFormat: "decimal",
               roundTo: 0
             },
-            isComplex: false
+            isComplex: false,
+            variableValue: math.zeros(1, 1), // default value for new variables
+            variableDisplayValue: "1"
           }) as GSK_VARIABLE_NUMBER
       )
     ];

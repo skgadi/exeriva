@@ -3,6 +3,7 @@ import type {
   GSK_VARIABLE_NUMBER,
 } from "@/library/types/variables";
 import * as math from "mathjs";
+import { displayVariable } from "@/services/app-utils/variables/viewer";
 
 export const extractVariablesFromText = (text: string) => {
   // Variable is indicated when a word starts with #
@@ -25,39 +26,39 @@ export const getRandomNumber = (
   range: [number, number],
   type: GSK_NUMBER_TYPE,
 ) => {
-  const [min, max] = range;
-  if (min === max) {
-    return min;
-  }
-  if (min > max) {
-    throw new Error("Invalid range: min is greater than max");
-  }
-  switch (type.type) {
-    case "integer": {
-      return math.randomInt(min, max + 1);
+  try {
+    const [min, max] = range;
+    if (min === max) {
+      return min;
     }
-    case "decimal": {
-      const number = math.random(min, max);
-      return math.round(number, type.roundTo);
+    if (min > max) {
+      throw new Error("Invalid range: min is greater than max");
     }
-    case "fraction":
-    case "mixed-fraction": {
-      // Numerator of size round to
-      const numerator = math.randomInt(1, Math.pow(10, type.roundTo));
+    switch (type.type) {
+      case "integer": {
+        return math.randomInt(min, max + 1);
+      }
+      case "decimal": {
+        const number = math.random(min, max);
+        return math.round(number, type.roundTo);
+      }
+      case "rational": {
+        // Numerator of size round to
+        const numerator = math.randomInt(1, Math.pow(10, type.roundTo));
 
-      const denominatorAbsoluteMax = Math.pow(10, type.roundTo + 1);
-      const denominatorClosestToZero = 1 / denominatorAbsoluteMax;
-      const denominatorRangeMax = getValueBetweenRangeForDenominator(
-        numerator / range[0],
-        denominatorAbsoluteMax,
-        denominatorClosestToZero,
-      );
-      const denominatorRangeMin = getValueBetweenRangeForDenominator(
-        numerator / range[1],
-        denominatorAbsoluteMax,
-        denominatorClosestToZero,
-      );
-      /*
+        const denominatorAbsoluteMax = Math.pow(10, type.roundTo + 1);
+        const denominatorClosestToZero = 1 / denominatorAbsoluteMax;
+        const denominatorRangeMax = getValueBetweenRangeForDenominator(
+          numerator / range[0],
+          denominatorAbsoluteMax,
+          denominatorClosestToZero,
+        );
+        const denominatorRangeMin = getValueBetweenRangeForDenominator(
+          numerator / range[1],
+          denominatorAbsoluteMax,
+          denominatorClosestToZero,
+        );
+        /*
       const denominatorRangeCalcMin =
         math.sign(denominatorRangeMin) *
         Math.min(math.abs(denominatorRangeMin), denominatorAbsoluteMax);
@@ -65,29 +66,34 @@ export const getRandomNumber = (
         math.sign(denominatorRangeMax) *
         Math.min(math.abs(denominatorRangeMax), denominatorAbsoluteMax);
         */
-      // Thre will be two ranges.
-      const denominatorRangeFinalRange = getDenominatorsRange(
-        [denominatorRangeMin, denominatorRangeMax],
-        denominatorAbsoluteMax,
-        denominatorClosestToZero,
-      );
-      console.log("Numerator", numerator);
-      console.log("Range", range);
-      console.log(
-        "denominatorRangeFinalRange",
-        denominatorRangeFinalRange,
-        denominatorRangeMin,
-        denominatorRangeMax,
-      );
-      const denominator = selectANumberFromRangeOnLogScale(
-        denominatorRangeFinalRange,
-      );
-      const denFactor =
-        math.abs(denominator) < 1 ? 1 / math.abs(denominator) : 1;
-      const finalDenominator = math.round(denominator * denFactor) | 1;
-      const finalNumerator = math.round(numerator * denFactor);
-      return math.fraction(finalNumerator, finalDenominator).toLatex();
+        // Thre will be two ranges.
+        const denominatorRangeFinalRange = getDenominatorsRange(
+          [denominatorRangeMin, denominatorRangeMax],
+          denominatorAbsoluteMax,
+          denominatorClosestToZero,
+        );
+        console.log("Numerator", numerator);
+        console.log("Range", range);
+        console.log(
+          "denominatorRangeFinalRange",
+          denominatorRangeFinalRange,
+          denominatorRangeMin,
+          denominatorRangeMax,
+        );
+
+        const denominator = selectANumberFromRangeOnLogScale(
+          denominatorRangeFinalRange,
+        );
+        const denFactor =
+          math.abs(denominator) < 1 ? 1 / math.abs(denominator) : 1;
+        const finalDenominator = math.round(denominator * denFactor) | 1;
+        const finalNumerator = math.round(numerator * denFactor);
+        return math.fraction(finalNumerator, finalDenominator);
+      }
     }
+  } catch (error) {
+    console.error("Error in getRandomNumber:", error);
+    return math.random(range[0], range[1]); // Fallback to a random number in the range
   }
 };
 
@@ -169,5 +175,30 @@ const selectANumberFromRangeOnLogScale = (range: [number, number]): number => {
 };
 
 export const generateRandomNumber = (inVariable: GSK_VARIABLE_NUMBER) => {
-  console.log(inVariable);
+  inVariable.variableValue = math.zeros(
+    inVariable.size[0],
+    inVariable.size[1],
+  ) as math.Matrix;
+  for (let i = 0; i < inVariable.size[0]; i++) {
+    for (let j = 0; j < inVariable.size[1]; j++) {
+      const realPart = getRandomNumber(
+        inVariable.rangeReal,
+        inVariable.typeReal,
+      );
+      if (inVariable.isComplex) {
+        const imaginaryPart = getRandomNumber(
+          inVariable.rangeImaginary,
+          inVariable.typeImaginary,
+        );
+        inVariable.variableValue.set(
+          [i, j],
+          math.complex(math.number(realPart), math.number(imaginaryPart)),
+        );
+      } else {
+        inVariable.variableValue.set([i, j], realPart);
+      }
+    }
+  }
+  console.log("Generated variable value:", inVariable.variableValue);
+  displayVariable(inVariable);
 };

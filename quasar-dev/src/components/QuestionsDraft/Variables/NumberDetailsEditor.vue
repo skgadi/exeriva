@@ -92,16 +92,12 @@ const numberTypes = [
     display: "Integer"
   },
   {
+    id: "rational",
+    display: "Rational"
+  },
+  {
     id: "decimal",
     display: "Decimal"
-  },
-  {
-    id: "fraction",
-    display: "Fraction"
-  },
-  {
-    id: "mixed-fraction",
-    display: "Mixed fraction"
   }
 ];
 
@@ -117,6 +113,14 @@ const numberDisplayFormat = [
   {
     value: "engineering",
     label: "Engineering"
+  },
+  {
+    value: "fraction",
+    label: "Fraction"
+  },
+  {
+    value: "mixed-fraction",
+    label: "Mixed fraction"
   }
 ];
 

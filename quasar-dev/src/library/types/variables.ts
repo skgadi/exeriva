@@ -1,10 +1,13 @@
+import type { Matrix } from "mathjs";
+
 export interface GSK_NUMBER_TYPE {
-  type:
-    | "integer"
+  type: "integer" | "rational" | "decimal";
+  showFormat:
+    | "engineering"
+    | "scientific"
     | "decimal"
     | "fraction"
     | "mixed-fraction";
-  showFormat: "engineering" | "scientific" | "decimal";
   roundTo: number;
 }
 
@@ -17,7 +20,7 @@ export interface GSK_VARIABLE_NUMBER {
   typeReal: GSK_NUMBER_TYPE;
   typeImaginary: GSK_NUMBER_TYPE;
   isComplex: boolean;
-  variableValue: string; // a MathJS
+  variableValue: Matrix; // a mathjs representation of the variable value
   variableDisplayValue: string; // a LaTeX representation of the variableValue
 }
 
