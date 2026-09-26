@@ -8,44 +8,21 @@
     "
     class="row justify-center items-center bg-grey-2"
   >
-    <div class="col-auto" style="writing-mode: sideways-lr" v-if="title">{{
-      title
-    }}</div>
+    <div
+      class="col-auto q-py-sm"
+      style="writing-mode: sideways-lr"
+      v-if="title"
+      >{{ title }}</div
+    >
     <div class="col">
-      <q-select
-        v-model="type.type"
-        :options="numberTypes"
-        option-value="id"
-        option-label="display"
-        label="Number type"
-        style="min-width: 150px"
-        dense
-        outlined
-        emit-value
-        map-options
-      />
-      <q-select
-        v-model="type.showFormat"
-        :options="numberDisplayFormat"
-        option-value="value"
-        option-label="label"
-        label="Display format"
-        style="min-width: 150px"
-        dense
-        outlined
-        emit-value
-        map-options
+      <number-editor
+        v-model="type"
+        :show-round-to="showRoundTo"
+        :show-numerator-digits="showNumeratorDigits"
+        :show-type="showType"
       />
       <q-input
-        v-model.number="type.roundTo"
-        type="number"
-        dense
-        outlined
-        label="Round to"
-        min="0"
-        @update:model-value="enforceMin"
-      />
-      <q-input
+        v-if="range"
         v-model.number="range[0]"
         type="number"
         dense
@@ -54,6 +31,7 @@
         @update:model-value="adjustMinMax"
       />
       <q-input
+        v-if="range"
         v-model.number="range[1]"
         type="number"
         dense
@@ -69,6 +47,18 @@ const props = defineProps({
   title: {
     type: String,
     required: false
+  },
+  showRoundTo: {
+    type: Boolean,
+    default: true
+  },
+  showNumeratorDigits: {
+    type: Boolean,
+    default: true
+  },
+  showType: {
+    type: Boolean,
+    default: true
   }
 });
 const type = defineModel("type", {
@@ -78,51 +68,16 @@ const type = defineModel("type", {
 
 const range = defineModel("range", {
   type: Object as () => GSK_VARIABLE_NUMBER["rangeReal"],
-  required: true
+  required: false
 });
+
+import NumberEditor from "@/components/QuestionsDraft/Variables/NumberEditor.vue";
 
 import type {
   GSK_NUMBER_TYPE,
   GSK_VARIABLE_NUMBER
 } from "@/library/types/variables";
-
-const numberTypes = [
-  {
-    id: "integer",
-    display: "Integer"
-  },
-  {
-    id: "rational",
-    display: "Rational"
-  },
-  {
-    id: "decimal",
-    display: "Decimal"
-  }
-];
-
-const numberDisplayFormat = [
-  {
-    value: "decimal",
-    label: "Decimal"
-  },
-  {
-    value: "scientific",
-    label: "Scientific"
-  },
-  {
-    value: "engineering",
-    label: "Engineering"
-  },
-  {
-    value: "fraction",
-    label: "Fraction"
-  },
-  {
-    value: "mixed-fraction",
-    label: "Mixed fraction"
-  }
-];
+import { computed } from "vue";
 
 const enforceMin = (val: string | number | null): void => {
   if (val === null || val === "" || Number(val) < 0) {
@@ -133,6 +88,10 @@ const enforceMin = (val: string | number | null): void => {
 const adjustMinMax = (val: string | number | null): void => {
   if (val === null || val === "") {
     val = 0;
+  }
+  // if no range, return
+  if (!range || !Array.isArray(range.value) || range.value.length !== 2) {
+    return;
   }
   range.value[0] = range.value[0] === null ? 0 : Number(range.value[0]);
   range.value[1] = range.value[1] === null ? 9 : Number(range.value[1]);

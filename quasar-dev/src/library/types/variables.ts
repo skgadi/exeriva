@@ -9,6 +9,8 @@ export interface GSK_NUMBER_TYPE {
     | "fraction"
     | "mixed-fraction";
   roundTo: number;
+  fractionNumeratorDigits: number;
+  displayRoundTo: number;
 }
 
 export interface GSK_VARIABLE_NUMBER {
@@ -22,6 +24,18 @@ export interface GSK_VARIABLE_NUMBER {
   isComplex: boolean;
   variableValue: Matrix; // a mathjs representation of the variable value
   variableDisplayValue: string; // a LaTeX representation of the variableValue
+}
+
+// A mathematical expression with numerical values as output upon evaulated
+export interface GSK_VARIABLE_EXPRESSION {
+  type: "expression";
+  name: string;
+  expression: string;
+  variableValue: Matrix; // a mathjs representation of the variable value
+  variableDisplayValue: string; // a LaTeX representation of the variableValue
+  typeReal: GSK_NUMBER_TYPE;
+  typeImaginary: GSK_NUMBER_TYPE;
+  size: [number, number]; // This will be calculated based on the expression
 }
 
 export interface GSK_VARIABLE_STRING {
@@ -38,14 +52,4 @@ export interface GSK_VARIABLE_DATE_TIME {
   range: [Date, Date];
   format: string;
   size: [number, number]; // [rows, columns] for matrix, [1, 1] for scalar
-}
-
-// A mathematical expression with numerical values as output upon evaulated
-export interface GSK_VARIABLE_EXPRESSION {
-  type: "expression";
-  name: string;
-  expression: string;
-  variableValue: Matrix; // a mathjs representation of the variable value
-  variableDisplayValue: string; // a LaTeX representation of the variableValue
-  size: [number, number]; // This will be calculated based on the expression
 }

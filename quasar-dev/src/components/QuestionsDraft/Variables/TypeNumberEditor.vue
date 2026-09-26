@@ -26,6 +26,10 @@ const variable = defineModel({
   required: true
 });
 
+const emit = defineEmits<{
+  (e: "needsEvaluation"): void;
+}>();
+
 import NumberDetailsEditor from "@/components/QuestionsDraft/Variables/NumberDetailsEditor.vue";
 import DisplayTex from "@/components/ExtrasForQuasar/DisplayTex.vue";
 
@@ -44,6 +48,7 @@ watch(
   ],
   () => {
     generateRandomNumber(variable.value);
+    emit("needsEvaluation");
   },
   { deep: true }
 );

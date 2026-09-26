@@ -44,9 +44,15 @@ export const getRandomNumber = (
       }
       case "rational": {
         // Numerator of size round to
-        const numerator = math.randomInt(1, Math.pow(10, type.roundTo));
+        const numerator = math.randomInt(
+          1,
+          Math.pow(10, type.fractionNumeratorDigits),
+        );
 
-        const denominatorAbsoluteMax = Math.pow(10, type.roundTo + 1);
+        const denominatorAbsoluteMax = Math.pow(
+          10,
+          type.fractionNumeratorDigits + 1,
+        );
         const denominatorClosestToZero = 1 / denominatorAbsoluteMax;
         const denominatorRangeMax = getValueBetweenRangeForDenominator(
           numerator / range[0],
@@ -71,14 +77,6 @@ export const getRandomNumber = (
           [denominatorRangeMin, denominatorRangeMax],
           denominatorAbsoluteMax,
           denominatorClosestToZero,
-        );
-        console.log("Numerator", numerator);
-        console.log("Range", range);
-        console.log(
-          "denominatorRangeFinalRange",
-          denominatorRangeFinalRange,
-          denominatorRangeMin,
-          denominatorRangeMax,
         );
 
         const denominator = selectANumberFromRangeOnLogScale(
@@ -131,18 +129,15 @@ const getDenominatorsRange = (
   const [denominatorMin, denominatorMax] = denominatorRange;
 
   if (denominatorMax === 0) {
-    console.log("case 2", denominatorMin, denominatorMax);
     return [denominatorMin, -closestToZero];
   }
   if (denominatorMin === 0) {
-    console.log("case 3", denominatorMin, denominatorMax);
     return [closestToZero, denominatorMax];
   }
   if (
     (denominatorMax < 0 && denominatorMin < 0) ||
     (denominatorMax > 0 && denominatorMin > 0)
   ) {
-    console.log("case 1", denominatorMin, denominatorMax);
     return [denominatorMin, denominatorMax];
   }
   // The only case left is when range is crossing zero
@@ -153,11 +148,10 @@ const getDenominatorsRange = (
   const weight = absNegative / (absNegative + absPositive);
   if (math.random() < weight) {
     // Choose negative range
-    console.log("case 4 (negative)", denominatorMin, denominatorMax);
+
     return [-absoluteMax, denominatorMax];
   }
   // Choose positive range
-  console.log("case 5 (positive)", denominatorMin, denominatorMax);
   return [denominatorMin, absoluteMax];
 };
 
@@ -199,6 +193,6 @@ export const generateRandomNumber = (inVariable: GSK_VARIABLE_NUMBER) => {
       }
     }
   }
-  console.log("Generated variable value:", inVariable.variableValue);
+  //console.log("Generated variable value:", inVariable.variableValue);
   displayVariable(inVariable);
 };

@@ -1,6 +1,9 @@
 import * as math from "mathjs";
 
-import type { GSK_VARIABLE_NUMBER } from "@/library/types/variables";
+import type {
+  GSK_VARIABLE_EXPRESSION,
+  GSK_VARIABLE_NUMBER,
+} from "@/library/types/variables";
 
 const displayNumber = (
   value: math.MathNumericType,
@@ -10,7 +13,7 @@ const displayNumber = (
   switch (type.showFormat) {
     case "decimal": {
       if (isImaginary) {
-        const valueToDisplay = math.abs(math.round(value, type.roundTo));
+        const valueToDisplay = math.abs(math.round(value, type.displayRoundTo));
         const sign = math.smaller(value, 0) ? "-" : "+";
         if (valueToDisplay === 0) {
           return "";
@@ -18,9 +21,9 @@ const displayNumber = (
         if (valueToDisplay === 1) {
           return `${sign}i`;
         }
-        return `${sign}i${math.abs(math.round(value, type.roundTo)).toString()}`;
+        return `${sign}i${math.abs(math.round(value, type.displayRoundTo)).toString()}`;
       } else {
-        return math.round(value, type.roundTo).toString();
+        return math.round(value, type.displayRoundTo).toString();
       }
     }
     case "fraction": {
@@ -76,7 +79,7 @@ const displayNumber = (
     case "engineering": {
       if (isImaginary) {
         const sign = math.smaller(value, 0) ? "-" : "+";
-        const valueToDisplay = math.abs(value);
+        const valueToDisplay = math.abs(Number(value));
         if (valueToDisplay === 0) {
           return "";
         }
@@ -84,19 +87,27 @@ const displayNumber = (
           return `${sign}i`;
         }
         return `${sign}i${math
-          .format(valueToDisplay, { notation: "engineering" })
+          .format(valueToDisplay, {
+            notation: "engineering",
+            precision: type.displayRoundTo,
+          })
           .replace(/e[+-]0+$/i, "")
           .replace(/e\+?(-?\d+)/i, " \\times 10^{$1}")}`;
       }
+
       return math
-        .format(value, { notation: "engineering" })
+        .format(math.number(value as number), {
+          notation: "engineering",
+          fraction: "decimal",
+          precision: type.displayRoundTo,
+        })
         .replace(/e[+-]0+$/i, "")
         .replace(/e\+?(-?\d+)/i, " \\times 10^{$1}");
     }
     case "scientific": {
       if (isImaginary) {
         const sign = math.smaller(value, 0) ? "-" : "+";
-        const valueToDisplay = math.abs(value);
+        const valueToDisplay = math.abs(Number(value));
         if (valueToDisplay === 0) {
           return "";
         }
@@ -104,12 +115,20 @@ const displayNumber = (
           return `${sign}i`;
         }
         return `${sign}i${math
-          .format(valueToDisplay, { notation: "exponential" })
+          .format(math.number(valueToDisplay), {
+            notation: "exponential",
+            fraction: "decimal",
+            precision: type.displayRoundTo,
+          })
           .replace(/e[+-]0+$/i, "")
           .replace(/e\+?(-?\d+)/i, " \\times 10^{$1}")}`;
       }
       return math
-        .format(value, { notation: "exponential" })
+        .format(math.number(value as number), {
+          notation: "exponential",
+          fraction: "decimal",
+          precision: type.displayRoundTo,
+        })
         .replace(/e[+-]0+$/i, "")
         .replace(/e\+?(-?\d+)/i, " \\times 10^{$1}");
     }
@@ -118,7 +137,9 @@ const displayNumber = (
   }
 };
 
-export const displayVariable = (inVariable: GSK_VARIABLE_NUMBER) => {
+export const displayVariable = (
+  inVariable: GSK_VARIABLE_NUMBER | GSK_VARIABLE_EXPRESSION,
+) => {
   try {
     // make sure the variableValue is a mathjs matrix
     inVariable.variableValue = math.matrix(inVariable.variableValue);
@@ -154,8 +175,8 @@ export const displayVariable = (inVariable: GSK_VARIABLE_NUMBER) => {
       finalDisplayValue += "\\end{bmatrix}";
       inVariable.variableDisplayValue = finalDisplayValue;
     }
-  } catch (error) {
-    console.error("Error displaying variable:", error);
+  } catch {
+    //console.warn("Error displaying variable:", error);
     inVariable.variableDisplayValue = "Error";
   }
 };

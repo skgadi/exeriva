@@ -101,7 +101,10 @@
             </q-tab-panel>
 
             <q-tab-panel name="variables" style="height: 100%">
-              <edit-variables-box v-model="draftElement" />
+              <edit-variables-box
+                v-model="draftElement"
+                @needs-evaluation="evaluateExpression(draftElement.variables)"
+              />
             </q-tab-panel>
 
             <q-tab-panel name="preview">
@@ -137,6 +140,7 @@ import EditVariablesBox from "@/components/QuestionsDraft/EditVariablesBox.vue";
 import { ref, watch } from "vue";
 import type { GSK_DRAFT_ELEMENT } from "@/library/types/questions";
 import { useAppSettingsStore } from "@/stores/app-settings";
+import { evaluateExpression } from "@/services/app-utils/variables/evaluate-expressins";
 
 const appSettingsStore = useAppSettingsStore();
 

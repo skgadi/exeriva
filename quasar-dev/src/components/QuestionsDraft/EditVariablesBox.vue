@@ -8,23 +8,31 @@
           <q-btn dense flat :label="item.type" class="q-mr-sm" align="right">
             <q-menu>
               <q-list dense separator>
-                <q-item clickable v-close-popup @click="item.type = 'number'">
+                <q-item
+                  clickable
+                  v-close-popup
+                  @click="changeVariableType(idx, 'number')"
+                >
                   <q-item-section>Number</q-item-section>
                 </q-item>
-                <q-item clickable v-close-popup @click="item.type = 'string'">
+                <q-item
+                  clickable
+                  v-close-popup
+                  @click="changeVariableType(idx, 'string')"
+                >
                   <q-item-section>String</q-item-section>
                 </q-item>
                 <q-item
                   clickable
                   v-close-popup
-                  @click="item.type = 'date-time'"
+                  @click="changeVariableType(idx, 'date-time')"
                 >
                   <q-item-section>Date-Time</q-item-section>
                 </q-item>
                 <q-item
                   clickable
                   v-close-popup
-                  @click="item.type = 'expression'"
+                  @click="changeVariableType(idx, 'expression')"
                 >
                   <q-item-section>Expression</q-item-section>
                 </q-item>
@@ -59,10 +67,12 @@
         <type-number
           v-if="draftElement.variables[idx]?.type === 'number'"
           v-model="draftElement.variables[idx]"
+          @needs-evaluation="emit('needsEvaluation')"
         />
         <type-expression
           v-if="draftElement.variables[idx]?.type === 'expression'"
           v-model="draftElement.variables[idx]"
+          @needs-evaluation="emit('needsEvaluation')"
         />
       </q-card>
     </template>
@@ -75,14 +85,19 @@ const draftElement = defineModel({
   required: true
 });
 
+const emit = defineEmits<{
+  (e: "needsEvaluation"): void;
+}>();
+
 import CommonEditor from "@/components/QuestionsDraft/Variables/CommonEditor.vue";
 import TypeNumber from "@/components/QuestionsDraft/Variables/TypeNumberEditor.vue";
 import TypeExpression from "@/components/QuestionsDraft/Variables/TypeExpressionEditor.vue";
 
 import { watch } from "vue";
 import type { GSK_DRAFT_ELEMENT } from "@/library/types/questions";
-import type { GSK_VARIABLE_NUMBER } from "@/library/types/variables";
 import { extractVariablesFromText } from "@/services/app-utils/variables/generator";
+import { getDefaultValue } from "@/services/app-utils/variables/default-values";
+
 import * as math from "mathjs";
 
 watch(
@@ -103,29 +118,11 @@ watch(
         variable => !removedVariables.some(v => v.name === variable.name)
       ),
 
-      ...newVariables.map(
-        variable =>
-          ({
-            type: "number",
-            name: variable,
-            size: [1, 1], // default size for new variables
-            rangeReal: [1, 9],
-            rangeImaginary: [0, 0],
-            typeReal: {
-              type: "integer",
-              showFormat: "decimal",
-              roundTo: 0
-            },
-            typeImaginary: {
-              type: "integer",
-              showFormat: "decimal",
-              roundTo: 0
-            },
-            isComplex: false,
-            variableValue: math.zeros(1, 1), // default value for new variables
-            variableDisplayValue: "1"
-          }) as GSK_VARIABLE_NUMBER
-      )
+      ...newVariables.map(variable => {
+        const newVariable = getDefaultValue("number");
+        newVariable.name = variable;
+        return newVariable;
+      })
     ];
     //console.log("draftElement changed:", newValue);
   },
@@ -142,5 +139,15 @@ const moveVariable = (idx: number, direction: number) => {
   if (draftElement.value.variables[newIndex] === undefined) return;
   draftElement.value.variables[idx] = draftElement.value.variables[newIndex];
   draftElement.value.variables[newIndex] = temp;
+};
+
+const changeVariableType = (
+  idx: number,
+  newType: GSK_DRAFT_ELEMENT["variables"][0]["type"]
+) => {
+  if (draftElement.value.variables[idx] === undefined) return;
+  const newVariableDefaultValue = getDefaultValue(newType);
+  newVariableDefaultValue.name = draftElement.value.variables[idx].name; // keep the same name
+  draftElement.value.variables[idx] = newVariableDefaultValue;
 };
 </script>

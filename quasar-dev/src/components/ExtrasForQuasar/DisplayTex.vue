@@ -45,7 +45,6 @@ watch(
   () => props.texContent,
   () => {
     renderMath();
-    console.log("Rendered math for texContent:", props.texContent);
   }
 );
 onMounted(() => {
