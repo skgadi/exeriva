@@ -31,7 +31,7 @@
           color="primary"
           title="Save"
           icon="mdi-content-save-outline"
-          @click="questionsStore.saveQuestionPaperDraft(questionToDraft)"
+          @click="saveDraft"
         />
         <q-btn
           dense
@@ -77,8 +77,10 @@ import DraftMain from "@/components/QuestionsDraft/DraftMain.vue";
 
 import { ref, watch } from "vue";
 import { useQuestionsStore } from "@/stores/questions";
+import { useRouter } from "vue-router";
 
 const questionsStore = useQuestionsStore();
+const router = useRouter();
 
 const questionToDraft = ref<GSK_QUESTION_PAPER_DRAFT>(
   questionsStore.getCopyOrCreateNewDraft(props.questionPaperDraft?.id || null)
@@ -93,4 +95,13 @@ watch(
   },
   { immediate: true }
 );
+
+const saveDraft = () => {
+  questionsStore.saveQuestionPaperDraft(questionToDraft.value);
+  // if it is a new page, then we need to update the route to the new id
+  if (!props.questionPaperDraft) {
+    const newId = questionToDraft.value.id;
+    router.push(`/questions/${newId}`);
+  }
+};
 </script>
