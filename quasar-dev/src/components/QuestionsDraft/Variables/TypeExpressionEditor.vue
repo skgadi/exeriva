@@ -58,7 +58,11 @@ watch(
 );
 
 watch(
-  () => variable.value.variableValue,
+  () => [
+    variable.value.variableValue,
+    variable.value.typeReal,
+    variable.value.typeImaginary
+  ],
   () => {
     const varVal = JSON.parse(
       JSON.stringify(variable.value, math.replacer),
@@ -66,6 +70,7 @@ watch(
     ) as GSK_VARIABLE_EXPRESSION;
     displayVariable(varVal);
     variable.value.variableDisplayValue = `${varVal.variableDisplayValue}`;
-  }
+  },
+  { deep: true }
 );
 </script>

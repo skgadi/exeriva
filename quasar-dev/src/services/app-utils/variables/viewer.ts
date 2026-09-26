@@ -149,8 +149,9 @@ export const displayVariable = (
         .im;
       inVariable.variableDisplayValue =
         `${displayNumber(realPartOfValue, inVariable.typeReal, false)} ${displayNumber(imaginaryPartOfValue, inVariable.typeImaginary, true)}`.trim();
+    } else {
+      inVariable.variableDisplayValue = `${displayNumber(inVariable.variableValue, inVariable.typeReal, false)}`;
     }
-    inVariable.variableDisplayValue = `${displayNumber(inVariable.variableValue, inVariable.typeReal, false)}`;
   } catch {
     //console.warn("Error displaying variable:", error);
     inVariable.variableDisplayValue = "Error";
