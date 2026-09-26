@@ -44,6 +44,7 @@ export interface GSK_VARIABLE_STRING {
   values: string;
   options: string[];
   size: [number, number]; // [rows, columns] for matrix, [1, 1] for scalar
+  variableDisplayValue: string;
 }
 
 export interface GSK_VARIABLE_DATE_TIME {
@@ -52,4 +53,5 @@ export interface GSK_VARIABLE_DATE_TIME {
   range: [Date, Date];
   format: string;
   size: [number, number]; // [rows, columns] for matrix, [1, 1] for scalar
+  variableDisplayValue: string;
 }

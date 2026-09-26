@@ -98,8 +98,6 @@ import type { GSK_DRAFT_ELEMENT } from "@/library/types/questions";
 import { extractVariablesFromText } from "@/services/app-utils/variables/generator";
 import { getDefaultValue } from "@/services/app-utils/variables/default-values";
 
-import * as math from "mathjs";
-
 watch(
   () => draftElement.value,
   newValue => {
@@ -124,7 +122,6 @@ watch(
         return newVariable;
       })
     ];
-    //console.log("draftElement changed:", newValue);
   },
   { immediate: true }
 );

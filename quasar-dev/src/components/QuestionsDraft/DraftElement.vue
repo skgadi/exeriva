@@ -108,12 +108,18 @@
             </q-tab-panel>
 
             <q-tab-panel name="preview">
-              <viewer-box :draft-text="draftElement.text" />
+              <viewer-box
+                :draft-text="draftElement.text"
+                :variables="draftElement.variables"
+              />
             </q-tab-panel>
           </q-tab-panels>
         </template>
         <template v-slot:after>
-          <viewer-box :draft-text="draftElement.text" />
+          <viewer-box
+            :draft-text="draftElement.text"
+            :variables="draftElement.variables"
+          />
         </template>
       </q-splitter>
     </div>
@@ -140,7 +146,7 @@ import EditVariablesBox from "@/components/QuestionsDraft/EditVariablesBox.vue";
 import { ref, watch } from "vue";
 import type { GSK_DRAFT_ELEMENT } from "@/library/types/questions";
 import { useAppSettingsStore } from "@/stores/app-settings";
-import { evaluateExpression } from "@/services/app-utils/variables/evaluate-expressins";
+import { evaluateExpression } from "@/services/app-utils/variables/evaluate-expressions";
 
 const appSettingsStore = useAppSettingsStore();
 

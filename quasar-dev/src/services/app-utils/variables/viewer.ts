@@ -4,6 +4,8 @@ import type {
   GSK_VARIABLE_EXPRESSION,
   GSK_VARIABLE_NUMBER,
 } from "@/library/types/variables";
+import { GSK_DRAFT_ELEMENT } from "@/library/types/questions";
+import { variableRegex } from "@/services/app-utils/variables/generator";
 
 const displayNumber = (
   value: math.MathNumericType,
@@ -179,4 +181,18 @@ export const displayVariable = (
     //console.warn("Error displaying variable:", error);
     inVariable.variableDisplayValue = "Error";
   }
+};
+
+export const changeVariableNamesToValues = (
+  inContent: string,
+  variables: GSK_DRAFT_ELEMENT["variables"],
+) => {
+  const outContent = inContent.replace(variableRegex, (match, variableName) => {
+    const variable = variables.find((v) => v.name === variableName);
+    if (variable) {
+      return variable.variableDisplayValue;
+    }
+    return match; // If variable not found, return the original match
+  });
+  return outContent;
 };

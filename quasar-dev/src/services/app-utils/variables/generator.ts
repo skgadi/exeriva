@@ -5,10 +5,11 @@ import type {
 import * as math from "mathjs";
 import { displayVariable } from "@/services/app-utils/variables/viewer";
 
+export const variableRegex = /(?<!\\)#(\w+)/g;
+
 export const extractVariablesFromText = (text: string) => {
   // Variable is indicated when a word starts with #
   // If it starts with \# it means the # is escaped and should not be treated as a variable
-  const variableRegex = /(?<!\\)#(\w+)/g;
   const variables: string[] = [];
   let match: RegExpExecArray | null;
 

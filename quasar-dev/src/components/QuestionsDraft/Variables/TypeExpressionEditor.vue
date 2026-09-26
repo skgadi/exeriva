@@ -24,7 +24,7 @@
     />
   </div>
   <div class="q-pa-md">
-    <display-tex :tex-content="variable.variableDisplayValue" />
+    <display-tex :tex-content="`$${variable.variableDisplayValue}$`" />
   </div>
 </template>
 <script setup lang="ts">
@@ -65,7 +65,7 @@ watch(
       math.reviver
     ) as GSK_VARIABLE_EXPRESSION;
     displayVariable(varVal);
-    variable.value.variableDisplayValue = `$${varVal.variableDisplayValue}$`;
+    variable.value.variableDisplayValue = `${varVal.variableDisplayValue}`;
   }
 );
 </script>
