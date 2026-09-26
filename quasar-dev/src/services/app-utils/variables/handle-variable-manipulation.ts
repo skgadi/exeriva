@@ -4,6 +4,7 @@ import type {
   GSK_VARIABLE_EXPRESSION,
   GSK_VARIABLE_NUMBER,
   GSK_VARIABLE_STRING,
+  GSK_STUDENT_ANSWER,
 } from "@/library/types/variables";
 import { extractVariablesFromText } from "@/services/app-utils/variables/generator";
 
@@ -79,6 +80,16 @@ const generateEmptyDateTime = (): GSK_VARIABLE_DATE_TIME => {
   };
 };
 
+const generateEmptyStudentAnswer = (): GSK_STUDENT_ANSWER => {
+  return {
+    studentInput: "2",
+    inputStyle: "text",
+    credit: 0,
+    requiredPrecision: 3,
+    isCorrect: false,
+  };
+};
+
 export const getDefaultValue = (
   type: GSK_DRAFT_ELEMENT["variables"][0]["type"],
 ): GSK_DRAFT_ELEMENT["variables"][0] => {
@@ -116,4 +127,17 @@ export const updateVariables = (inElement: GSK_DRAFT_ELEMENT) => {
       return newVariable;
     }),
   ];
+};
+
+export const setIsExpressionAnswerable = (
+  variable: GSK_VARIABLE_EXPRESSION,
+  isAnswerable: boolean,
+) => {
+  if (isAnswerable) {
+    if (!variable.studentAnswer) {
+      variable.studentAnswer = generateEmptyStudentAnswer();
+    }
+  } else {
+    delete variable.studentAnswer;
+  }
 };

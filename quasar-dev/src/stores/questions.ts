@@ -1,4 +1,5 @@
 import { defineStore, acceptHMRUpdate } from "pinia";
+import * as math from "mathjs";
 
 import type { GSK_QUESTION_PAPER_DRAFT } from "@/library/types/questions";
 
@@ -10,21 +11,25 @@ export const useQuestionsStore = defineStore("questions", {
 
   getters: {
     getQuestionpaperDisplay: (state) => {
-      return JSON.stringify(state.questionPaperDrafts);
+      return JSON.stringify(state.questionPaperDrafts, math.replacer);
     },
-
   },
 
   actions: {
     saveQuestionPaperDraft(inDraft: GSK_QUESTION_PAPER_DRAFT) {
       // if Draft exists, update its content (copy), else add its copy
       const index = this.questionPaperDrafts.findIndex(
-        (d) => d.id === inDraft.id
+        (d) => d.id === inDraft.id,
       );
       if (index !== -1) {
-        this.questionPaperDrafts[index] = JSON.parse(JSON.stringify(inDraft));
+        this.questionPaperDrafts[index] = JSON.parse(
+          JSON.stringify(inDraft, math.replacer),
+          math.reviver,
+        );
       } else {
-        this.questionPaperDrafts.push(JSON.parse(JSON.stringify(inDraft)));
+        this.questionPaperDrafts.push(
+          JSON.parse(JSON.stringify(inDraft, math.replacer), math.reviver),
+        );
       }
     },
     deleteQuestionPaperDraft(id: string) {
@@ -53,10 +58,10 @@ export const useQuestionsStore = defineStore("questions", {
       };
       return newDraft;
     },
-    getCopyOrCreateNewDraft(id: string|null): GSK_QUESTION_PAPER_DRAFT {
+    getCopyOrCreateNewDraft(id: string | null): GSK_QUESTION_PAPER_DRAFT {
       const draft = this.questionPaperDrafts.find((d) => d.id === id);
       if (draft) {
-        return JSON.parse(JSON.stringify(draft));
+        return JSON.parse(JSON.stringify(draft, math.replacer), math.reviver);
       } else {
         return this.getANewQuestionPaperDraft();
       }

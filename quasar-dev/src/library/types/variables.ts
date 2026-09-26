@@ -39,6 +39,7 @@ export interface GSK_VARIABLE_EXPRESSION extends GSK_VARIABLE_BASE {
   variableDisplayValue: string; // a LaTeX representation of the variableValue
   typeReal: GSK_NUMBER_TYPE;
   typeImaginary: GSK_NUMBER_TYPE;
+  studentAnswer?: GSK_STUDENT_ANSWER;
 }
 
 export interface GSK_VARIABLE_STRING extends GSK_VARIABLE_BASE {
@@ -57,4 +58,12 @@ export interface GSK_VARIABLE_DATE_TIME extends GSK_VARIABLE_BASE {
   format: string;
   variableDisplayValue: string;
   variableValue: Date;
+}
+
+export interface GSK_STUDENT_ANSWER {
+  studentInput: string;
+  requiredPrecision: number;
+  inputStyle: "text"; // css style for the input box
+  credit: number;
+  isCorrect: boolean;
 }

@@ -7,7 +7,7 @@
       placeholder="Enter an expression"
     />
   </div>
-  <div class="q-pa-md q-gutter-md row justify-center items-center">
+  <div class="q-pa-md q-gutter-md row justify-center items-start">
     <number-details-editor
       :title="'Real part'"
       :show-type="false"
@@ -22,9 +22,18 @@
       :show-numerator-digits="false"
       v-model:type="variable.typeImaginary"
     />
+    <student-answer-editor v-model="variable" />
+    <show-example-value
+      :display-refresh-button="false"
+      :value-to-display="variable.variableDisplayValue"
+      @refresh="refreshExampleValue"
+    />
   </div>
-  <div class="q-pa-md">
-    <display-tex :tex-content="`$${variable.variableDisplayValue}$`" />
+  <div
+    v-if="variable.studentAnswer !== undefined"
+    class="q-pa-md q-gutter-md row justify-center items-start"
+  >
+    <show-answer-with-test v-model="variable" />
   </div>
 </template>
 <script setup lang="ts">
@@ -37,8 +46,10 @@ const emit = defineEmits<{
   (e: "needsEvaluation"): void;
 }>();
 
-import DisplayTex from "@/components/ExtrasForQuasar/DisplayTex.vue";
 import NumberDetailsEditor from "@/components/QuestionsDraft/Variables/NumberDetailsEditor.vue";
+import StudentAnswerEditor from "@/components/QuestionsDraft/Variables/StudentAnswerEditor.vue";
+import ShowExampleValue from "@/components/QuestionsDraft/Variables/ShowExampleValue.vue";
+import ShowAnswerWithTest from "@/components/QuestionsDraft/Variables/ShowAnswerWithTest.vue";
 
 import type { GSK_VARIABLE_EXPRESSION } from "@/library/types/variables";
 import { watch } from "vue";
@@ -64,13 +75,17 @@ watch(
     variable.value.typeImaginary
   ],
   () => {
-    const varVal = JSON.parse(
-      JSON.stringify(variable.value, math.replacer),
-      math.reviver
-    ) as GSK_VARIABLE_EXPRESSION;
-    displayVariable(varVal);
-    variable.value.variableDisplayValue = `${varVal.variableDisplayValue}`;
+    refreshExampleValue();
   },
   { deep: true }
 );
+
+const refreshExampleValue = () => {
+  const varVal = JSON.parse(
+    JSON.stringify(variable.value, math.replacer),
+    math.reviver
+  ) as GSK_VARIABLE_EXPRESSION;
+  displayVariable(varVal);
+  variable.value.variableDisplayValue = `${varVal.variableDisplayValue}`;
+};
 </script>

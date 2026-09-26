@@ -8,37 +8,43 @@
     "
     class="row justify-center items-center bg-grey-2"
   >
-    <div
-      class="col-auto q-py-sm"
-      style="writing-mode: sideways-lr"
-      v-if="title"
-      >{{ title }}</div
-    >
     <div class="col">
-      <number-editor
-        v-model="type"
-        :show-round-to="showRoundTo"
-        :show-numerator-digits="showNumeratorDigits"
-        :show-type="showType"
-      />
-      <q-input
-        v-if="range"
-        v-model.number="range[0]"
-        type="number"
-        dense
-        outlined
-        label="Minimum value"
-        @update:model-value="adjustMinMax"
-      />
-      <q-input
-        v-if="range"
-        v-model.number="range[1]"
-        type="number"
-        dense
-        outlined
-        label="Maximum value"
-        @update:model-value="adjustMinMax"
-      />
+      <div class="row items-center" v-if="title" style="height: 40px">
+        <div class="col text-center">
+          <template v-if="showCheckbox">
+            <q-checkbox v-model="showElements" :label="title" />
+          </template>
+          <template v-else>
+            {{ title }}
+          </template>
+        </div>
+      </div>
+      <template v-if="showElements">
+        <number-editor
+          v-model="type"
+          :show-round-to="showRoundTo"
+          :show-numerator-digits="showNumeratorDigits"
+          :show-type="showType"
+        />
+        <q-input
+          v-if="range"
+          v-model.number="range[0]"
+          type="number"
+          dense
+          outlined
+          label="Minimum value"
+          @update:model-value="adjustMinMax"
+        />
+        <q-input
+          v-if="range"
+          v-model.number="range[1]"
+          type="number"
+          dense
+          outlined
+          label="Maximum value"
+          @update:model-value="adjustMinMax"
+        />
+      </template>
     </div>
   </div>
 </template>
@@ -59,6 +65,10 @@ const props = defineProps({
   showType: {
     type: Boolean,
     default: true
+  },
+  showCheckbox: {
+    type: Boolean,
+    default: false
   }
 });
 const type = defineModel("type", {
@@ -71,19 +81,18 @@ const range = defineModel("range", {
   required: false
 });
 
+const showElements = defineModel("showElements", {
+  type: Boolean,
+  required: false,
+  default: true
+});
+
 import NumberEditor from "@/components/QuestionsDraft/Variables/NumberEditor.vue";
 
 import type {
   GSK_NUMBER_TYPE,
   GSK_VARIABLE_NUMBER
 } from "@/library/types/variables";
-import { computed } from "vue";
-
-const enforceMin = (val: string | number | null): void => {
-  if (val === null || val === "" || Number(val) < 0) {
-    type.value.roundTo = 0;
-  }
-};
 
 const adjustMinMax = (val: string | number | null): void => {
   if (val === null || val === "") {
