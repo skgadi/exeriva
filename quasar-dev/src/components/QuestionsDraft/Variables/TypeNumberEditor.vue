@@ -43,8 +43,7 @@ watch(
     variable.value.typeReal,
     variable.value.rangeImaginary,
     variable.value.typeImaginary,
-    variable.value.isComplex,
-    variable.value.size
+    variable.value.isComplex
   ],
   () => {
     generateRandomNumber(variable.value);

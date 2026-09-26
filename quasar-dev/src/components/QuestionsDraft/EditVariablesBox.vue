@@ -58,12 +58,6 @@
             title="Move variable down"
           />
         </q-bar>
-        <div
-          v-if="draftElement.variables[idx]?.type != 'expression'"
-          class="q-py-xs"
-        >
-          <common-editor v-model="draftElement.variables[idx]" />
-        </div>
         <type-number
           v-if="draftElement.variables[idx]?.type === 'number'"
           v-model="draftElement.variables[idx]"
@@ -89,7 +83,6 @@ const emit = defineEmits<{
   (e: "needsEvaluation"): void;
 }>();
 
-import CommonEditor from "@/components/QuestionsDraft/Variables/CommonEditor.vue";
 import TypeNumber from "@/components/QuestionsDraft/Variables/TypeNumberEditor.vue";
 import TypeExpression from "@/components/QuestionsDraft/Variables/TypeExpressionEditor.vue";
 

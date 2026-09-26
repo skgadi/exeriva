@@ -5,13 +5,11 @@ import type {
   GSK_VARIABLE_NUMBER,
   GSK_VARIABLE_STRING,
 } from "@/library/types/variables";
-import * as math from "mathjs";
 
 const generateEmptyNumber = (): GSK_VARIABLE_NUMBER => {
   return {
     type: "number",
     name: "",
-    size: [1, 1],
     rangeReal: [1, 9],
     rangeImaginary: [1, 9],
     typeReal: {
@@ -29,7 +27,7 @@ const generateEmptyNumber = (): GSK_VARIABLE_NUMBER => {
       fractionNumeratorDigits: 1,
     },
     isComplex: false,
-    variableValue: math.matrix([[1]]),
+    variableValue: 1,
     variableDisplayValue: "1",
   };
 };
@@ -39,7 +37,7 @@ const generateEmptyExpression = (): GSK_VARIABLE_EXPRESSION => {
     type: "expression",
     name: "",
     expression: "1+1",
-    variableValue: math.matrix([[2]]),
+    variableValue: 2,
     variableDisplayValue: "2",
     typeReal: {
       type: "integer",
@@ -55,7 +53,6 @@ const generateEmptyExpression = (): GSK_VARIABLE_EXPRESSION => {
       displayRoundTo: 2,
       fractionNumeratorDigits: 1,
     },
-    size: [1, 1],
   };
 };
 
@@ -65,7 +62,8 @@ const generateEmptyString = (): GSK_VARIABLE_STRING => {
     name: "",
     values: "",
     options: [],
-    size: [1, 1],
+    variableDisplayValue: "",
+    variableValue: "",
   };
 };
 
@@ -75,7 +73,8 @@ const generateEmptyDateTime = (): GSK_VARIABLE_DATE_TIME => {
     name: "",
     range: [new Date(), new Date()],
     format: "YYYY-MM-DD",
-    size: [1, 1],
+    variableDisplayValue: "",
+    variableValue: new Date(),
   };
 };
 

@@ -143,40 +143,14 @@ export const displayVariable = (
   inVariable: GSK_VARIABLE_NUMBER | GSK_VARIABLE_EXPRESSION,
 ) => {
   try {
-    // make sure the variableValue is a mathjs matrix
-    inVariable.variableValue = math.matrix(inVariable.variableValue);
-    const valuesToDisplay = math.map(
-      inVariable.variableValue,
-      (value: math.MathNumericType) => {
-        //return value.toString(2); // Display the value with 2 decimal places
-        // if it is complex number, seperate the real and imaginary part and display them separately
-        if (math.isComplex(value)) {
-          const realPartOfValue = (value as math.Complex).re;
-          const imaginaryPartOfValue = (value as math.Complex).im;
-          return `${displayNumber(realPartOfValue, inVariable.typeReal, false)} ${displayNumber(imaginaryPartOfValue, inVariable.typeImaginary, true)}`.trim();
-        }
-        return `${displayNumber(value, inVariable.typeReal, false)}`;
-      },
-    );
-    // Convert the matrix of display values to latex format
-    if (inVariable.size[0] === 1 && inVariable.size[1] === 1) {
-      inVariable.variableDisplayValue = valuesToDisplay.get([0, 0]);
-    } else {
-      let finalDisplayValue = "\\begin{bmatrix}";
-      for (let i = 0; i < inVariable.size[0]; i++) {
-        for (let j = 0; j < inVariable.size[1]; j++) {
-          finalDisplayValue += valuesToDisplay.get([i, j]);
-          if (j < inVariable.size[1] - 1) {
-            finalDisplayValue += " & ";
-          }
-        }
-        if (i < inVariable.size[0] - 1) {
-          finalDisplayValue += " \\\\ ";
-        }
-      }
-      finalDisplayValue += "\\end{bmatrix}";
-      inVariable.variableDisplayValue = finalDisplayValue;
+    if (math.isComplex(inVariable.variableValue)) {
+      const realPartOfValue = (inVariable.variableValue as math.Complex).re;
+      const imaginaryPartOfValue = (inVariable.variableValue as math.Complex)
+        .im;
+      inVariable.variableDisplayValue =
+        `${displayNumber(realPartOfValue, inVariable.typeReal, false)} ${displayNumber(imaginaryPartOfValue, inVariable.typeImaginary, true)}`.trim();
     }
+    inVariable.variableDisplayValue = `${displayNumber(inVariable.variableValue, inVariable.typeReal, false)}`;
   } catch {
     //console.warn("Error displaying variable:", error);
     inVariable.variableDisplayValue = "Error";

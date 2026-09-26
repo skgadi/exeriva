@@ -38,26 +38,16 @@ export const evaluateExpression = (
       // Evaluate the expression and set the variableValue
       try {
         const result = parser.evaluate(formattedExpression);
-        // if the result is scalar, convert it to a 1x1 matrix
-        if (math.isMatrix(result) === false) {
-          const scalarMatrix = math.matrix([[result]]);
-          parser.set(`x_${index}`, scalarMatrix);
-          variable.variableValue = scalarMatrix;
-          variable.size = [1, 1];
-          return;
-        }
         // set the result to x_<index> for future evaluations
         parser.set(`x_${index}`, result);
         variable.variableValue = result;
-        variable.size = [result.size()?.[0] || 1, result.size()?.[1] || 1];
       } catch (error) {
         console.warn(
           `Error evaluating expression for variable ${variable.name}:`,
           error,
         );
         parser.set(`x_${index}`, math.matrix([[NaN]]));
-        variable.variableValue = math.matrix([[NaN]]);
-        variable.size = [1, 1];
+        variable.variableValue = NaN;
       }
     }
   });

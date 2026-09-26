@@ -170,30 +170,19 @@ const selectANumberFromRangeOnLogScale = (range: [number, number]): number => {
 };
 
 export const generateRandomNumber = (inVariable: GSK_VARIABLE_NUMBER) => {
-  inVariable.variableValue = math.zeros(
-    inVariable.size[0],
-    inVariable.size[1],
-  ) as math.Matrix;
-  for (let i = 0; i < inVariable.size[0]; i++) {
-    for (let j = 0; j < inVariable.size[1]; j++) {
-      const realPart = getRandomNumber(
-        inVariable.rangeReal,
-        inVariable.typeReal,
-      );
-      if (inVariable.isComplex) {
-        const imaginaryPart = getRandomNumber(
-          inVariable.rangeImaginary,
-          inVariable.typeImaginary,
-        );
-        inVariable.variableValue.set(
-          [i, j],
-          math.complex(math.number(realPart), math.number(imaginaryPart)),
-        );
-      } else {
-        inVariable.variableValue.set([i, j], realPart);
-      }
-    }
+  inVariable.variableValue = 0;
+  const realPart = getRandomNumber(inVariable.rangeReal, inVariable.typeReal);
+  if (inVariable.isComplex) {
+    const imaginaryPart = getRandomNumber(
+      inVariable.rangeImaginary,
+      inVariable.typeImaginary,
+    );
+    inVariable.variableValue = math.complex(
+      math.number(realPart),
+      math.number(imaginaryPart),
+    );
   }
+  inVariable.variableValue = math.number(realPart);
   //console.log("Generated variable value:", inVariable.variableValue);
   displayVariable(inVariable);
 };
