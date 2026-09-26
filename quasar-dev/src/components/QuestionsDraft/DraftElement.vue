@@ -147,6 +147,7 @@ import { ref, watch } from "vue";
 import type { GSK_DRAFT_ELEMENT } from "@/library/types/questions";
 import { useAppSettingsStore } from "@/stores/app-settings";
 import { evaluateExpression } from "@/services/app-utils/variables/evaluate-expressions";
+import { updateVariables } from "@/services/app-utils/variables/handle-variable-manipulation";
 
 const appSettingsStore = useAppSettingsStore();
 
@@ -201,4 +202,11 @@ const colorLabelLookup = {
     icon: "mdi-page-layout-footer"
   }
 };
+
+watch(
+  () => draftElement.value.text,
+  () => {
+    updateVariables(draftElement.value);
+  }
+);
 </script>

@@ -5,6 +5,7 @@ import type {
   GSK_VARIABLE_NUMBER,
   GSK_VARIABLE_STRING,
 } from "@/library/types/variables";
+import { extractVariablesFromText } from "@/services/app-utils/variables/generator";
 
 const generateEmptyNumber = (): GSK_VARIABLE_NUMBER => {
   return {
@@ -91,4 +92,28 @@ export const getDefaultValue = (
     case "date-time":
       return generateEmptyDateTime();
   }
+};
+
+export const updateVariables = (inElement: GSK_DRAFT_ELEMENT) => {
+  const variablesInElement = extractVariablesFromText(inElement.text);
+  // variablesInElement is the correct one. We keep the order from draftElements.variables
+  // but we also add any new variables that are in the text but not in the variables array
+  // We also remove any variables that are in the variables array but not in the text
+  const newVariables = variablesInElement.filter(
+    (variable) => !inElement.variables.some((v) => v.name === variable),
+  );
+  const removedVariables = inElement.variables.filter(
+    (variable) => !variablesInElement.includes(variable.name),
+  );
+  inElement.variables = [
+    ...inElement.variables.filter(
+      (variable) => !removedVariables.some((v) => v.name === variable.name),
+    ),
+
+    ...newVariables.map((variable) => {
+      const newVariable = getDefaultValue("number");
+      newVariable.name = variable;
+      return newVariable;
+    }),
+  ];
 };

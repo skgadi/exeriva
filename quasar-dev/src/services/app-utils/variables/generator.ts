@@ -181,8 +181,8 @@ export const generateRandomNumber = (inVariable: GSK_VARIABLE_NUMBER) => {
       math.number(realPart),
       math.number(imaginaryPart),
     );
+  } else {
+    inVariable.variableValue = math.number(realPart);
   }
-  inVariable.variableValue = math.number(realPart);
-  //console.log("Generated variable value:", inVariable.variableValue);
   displayVariable(inVariable);
 };
