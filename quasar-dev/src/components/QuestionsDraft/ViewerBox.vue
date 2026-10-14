@@ -1,12 +1,28 @@
 <template>
-  <div ref="content" class="q-px-xs">
+  <div ref="content" class="q-px-xs answer-content">
     <component :is="ViewBoxComponent" />
-    <q-item>Hello, World!</q-item>
-    <q-markdown :src="contentToDisplay" />
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed, nextTick, ref, h, watch } from "vue";
+
+import { marked } from "marked";
+import { QInput } from "quasar";
+
+import {
+  changeVariableNamesToValues,
+  variablePassingTextSignature
+} from "@/services/app-utils/variables/viewer";
+
+import type { GSK_DRAFT_ELEMENT } from "@/library/types/questions";
+import type { GSK_VARIABLE_EXPRESSION } from "@/library/types/variables";
+
+import "@quasar/quasar-ui-qmarkdown/dist/index.css";
+import "katex/dist/katex.min.css";
+
+import renderMathInElement from "katex/contrib/auto-render";
+
 const props = defineProps({
   draftText: {
     type: String,
@@ -18,28 +34,12 @@ const variables = defineModel({
   type: Object as () => GSK_DRAFT_ELEMENT["variables"],
   required: true
 });
-import { computed, nextTick, ref, h } from "vue";
-import {
-  changeVariableNamesToValues,
-  variablePassingTextSignature
-} from "@/services/app-utils/variables/viewer";
-import type { GSK_DRAFT_ELEMENT } from "@/library/types/questions";
-import type { GSK_VARIABLE_EXPRESSION } from "@/library/types/variables";
-
-import { QInput } from "quasar";
-
-import { QMarkdown } from "@quasar/quasar-ui-qmarkdown";
-import "@quasar/quasar-ui-qmarkdown/dist/index.css";
-import {
-  variableRegex,
-  extractVariablesFromText
-} from "@/services/app-utils/variables/generator";
-
-import "katex/dist/katex.min.css";
-import renderMathInElement from "katex/contrib/auto-render";
 
 const content = ref<HTMLElement | null>(null);
 
+/**
+ * Render math after Vue has updated the DOM.
+ */
 const renderMath = async () => {
   await nextTick();
 
@@ -49,6 +49,7 @@ const renderMath = async () => {
 
   renderMathInElement(content.value, {
     delimiters: [
+      // Display math first.
       {
         left: "$$",
         right: "$$",
@@ -60,76 +61,125 @@ const renderMath = async () => {
         display: false
       }
     ],
-    throwOnError: false
-  });
+    throwOnError: false,
+    ignoredTags: [
+      "script",
+      "noscript",
+      "style",
+      "textarea",
+      "pre",
+      "code",
+      "input",
+      "option"
+    ]
+  } as Parameters<typeof renderMathInElement>[1]);
 };
 
-const contentToDisplay = computed(() => {
-  const updatedContent = changeVariableNamesToValues(
-    props.draftText,
-    variables.value
-  );
-  renderMath();
-  return updatedContent || "No content to display";
-});
+/**
+ * Convert paragraph boundaries into line breaks so text
+ * surrounding QInput components can remain inline.
+ */
+const renderHtmlFragment = (html: string) => {
+  return html
+    .replace(/<\/p>\s*<p[^>]*>/gi, "<br>")
+    .replace(/^\s*<p[^>]*>/i, "")
+    .replace(/<\/p>\s*$/i, "");
+};
+
+/**
+ * Re-render mathematics when the draft or variables change.
+ */
+watch(
+  [() => props.draftText, () => variables.value],
+  async () => {
+    await nextTick();
+    await renderMath();
+  },
+  {
+    deep: true,
+    flush: "post",
+    immediate: true
+  }
+);
 
 const ViewBoxComponent = computed(() => {
   return {
     setup() {
       return () => {
-        const rawContent = props.draftText;
+        const rawContent = marked.parse(props.draftText, {
+          async: false
+        });
 
-        const variables1 = extractVariablesFromText(rawContent);
-        // filter out odd parts to extract text and variables separately
         const finalOut = changeVariableNamesToValues(
           rawContent,
           variables.value
         );
-        // Split the finalOut into parts based on the variable signature
-        const parts = finalOut.split(variablePassingTextSignature);
-        // Replace the variable placeholders with QInput components for each variable
 
-        console.log("parts", parts);
+        const parts = finalOut.split(variablePassingTextSignature);
 
         return h(
           "div",
-          {},
+          {
+            class: "answer-expression"
+          },
           parts.map((part, index) => {
-            if (part.trim() === "") {
-              return null; // Skip empty parts
+            if (part === "") {
+              return null;
             }
+
+            // Even indexes contain ordinary HTML.
             if (index % 2 === 0) {
-              // Even index: regular text
-              return part;
+              return h("span", {
+                class: "answer-text",
+                innerHTML: renderHtmlFragment(part)
+              });
             }
-            // if the part is not a variable name, return it as text
+
+            // Odd indexes contain variable names.
             const variableIdx = variables.value.findIndex(
               variable => variable.name === part.trim()
             );
+
             if (variableIdx === -1) {
-              return part; // Return the part as text if it's not a variable
+              return h("span", {
+                class: "answer-text",
+                innerHTML: renderHtmlFragment(part)
+              });
             }
+
             const variable = variables.value[
               variableIdx
             ] as GSK_VARIABLE_EXPRESSION;
-            if (
-              !(variables.value[variableIdx] as GSK_VARIABLE_EXPRESSION)
-                ?.studentAnswer
-            ) {
-              return part;
+
+            if (!variable?.studentAnswer) {
+              return h("span", {
+                class: "answer-text",
+                innerHTML: renderHtmlFragment(part)
+              });
             }
 
+            // Render a real, reactive Quasar input.
             return h(QInput, {
+              key: variable.name,
               dense: true,
-              placeholder: "Enter your answer",
-              modelValue: variable.studentAnswer?.studentInput,
+              placeholder: "Your answer",
+              modelValue: variable.studentAnswer.studentInput,
+
               "onUpdate:modelValue": (val: string | number | null) => {
                 if (variable.studentAnswer) {
                   variable.studentAnswer.studentInput = val as string;
                 }
               },
+
               outlined: true,
-              style: "display: inline-flex; width: 120px; margin: 0 4px;"
+              class: "inline-answer-input",
+
+              style: {
+                display: "inline-flex",
+                verticalAlign: "middle",
+                width: "120px",
+                margin: "0 4px"
+              }
             });
           })
         );
@@ -138,3 +188,39 @@ const ViewBoxComponent = computed(() => {
   };
 });
 </script>
+
+<style scoped>
+.answer-content {
+  display: inline-block;
+}
+
+.answer-expression {
+  line-height: 2.5;
+}
+
+.answer-text {
+  display: inline;
+}
+
+.inline-answer-input {
+  vertical-align: middle;
+}
+
+.inline-answer-input :deep(.q-field__control) {
+  border-radius: 6px;
+  background-color: #f5f9ff;
+}
+
+.inline-answer-input :deep(.q-field__native) {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.inline-answer-input :deep(.q-field__control:before) {
+  border-color: #9dbbe8;
+}
+
+.inline-answer-input :deep(.q-field--focused .q-field__control:after) {
+  border-color: var(--q-primary);
+}
+</style>
