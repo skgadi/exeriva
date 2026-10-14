@@ -158,12 +158,25 @@ export const displayVariable = (
   }
 };
 
+export const variablePassingTextSignature =
+  "GSK_VARIABLE_GOES_HERE_eJ0n$B8>&$n6";
+
+const setAnswerableHtml = (variable: GSK_VARIABLE_EXPRESSION): string => {
+  if (!variable.studentAnswer) {
+    return `<<${variablePassingTextSignature} ${variable.name}>>`;
+  }
+  return `${variablePassingTextSignature}${variable.name}${variablePassingTextSignature}`;
+};
+
 export const changeVariableNamesToValues = (
   inContent: string,
   variables: GSK_DRAFT_ELEMENT["variables"],
 ) => {
   const outContent = inContent.replace(variableRegex, (match, variableName) => {
     const variable = variables.find((v) => v.name === variableName);
+    if (variable && variable.type === "expression" && variable.studentAnswer) {
+      return setAnswerableHtml(variable);
+    }
     if (variable) {
       return variable.variableDisplayValue;
     }

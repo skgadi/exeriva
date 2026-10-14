@@ -110,7 +110,7 @@
             <q-tab-panel name="preview">
               <viewer-box
                 :draft-text="draftElement.text"
-                :variables="draftElement.variables"
+                v-model="draftElement.variables"
               />
             </q-tab-panel>
           </q-tab-panels>
@@ -118,7 +118,7 @@
         <template v-slot:after>
           <viewer-box
             :draft-text="draftElement.text"
-            :variables="draftElement.variables"
+            v-model="draftElement.variables"
           />
         </template>
       </q-splitter>
@@ -140,7 +140,7 @@ const draftElement = defineModel({
 });
 
 import EditorBox from "@/components/QuestionsDraft/EditorBox.vue";
-import viewerBox from "@/components/QuestionsDraft/ViewerBox.vue";
+import ViewerBox from "@/components/QuestionsDraft/ViewerBox.vue";
 import EditVariablesBox from "@/components/QuestionsDraft/EditVariablesBox.vue";
 
 import { ref, watch } from "vue";
