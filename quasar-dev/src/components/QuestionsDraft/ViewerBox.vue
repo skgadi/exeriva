@@ -18,6 +18,8 @@ import {
 import type { GSK_DRAFT_ELEMENT } from "@/library/types/questions";
 import type { GSK_VARIABLE_EXPRESSION } from "@/library/types/variables";
 
+import "@/css/components/answer-content.scss";
+
 import "@quasar/quasar-ui-qmarkdown/dist/index.css";
 import "katex/dist/katex.min.css";
 
@@ -49,7 +51,6 @@ const renderMath = async () => {
 
   renderMathInElement(content.value, {
     delimiters: [
-      // Display math first.
       {
         left: "$$",
         right: "$$",
@@ -76,14 +77,26 @@ const renderMath = async () => {
 };
 
 /**
- * Convert paragraph boundaries into line breaks so text
- * surrounding QInput components can remain inline.
+ * Convert Markdown HTML into a fragment that supports inline QInput
+ * components while preserving block-level headings and separators.
  */
-const renderHtmlFragment = (html: string) => {
-  return html
-    .replace(/<\/p>\s*<p[^>]*>/gi, "<br>")
-    .replace(/^\s*<p[^>]*>/i, "")
-    .replace(/<\/p>\s*$/i, "");
+const renderHtmlFragment = (html: string): string => {
+  return (
+    html
+      // Remove paragraph wrappers while preserving their text inline.
+      .replace(/<p(?:\s[^>]*)?>/gi, "")
+      .replace(/<\/p>/gi, "<br>")
+
+      // Preserve headings as block elements.
+      .replace(/<h([1-6])(?:\s[^>]*)?>/gi, "<h$1>")
+      .replace(/<\/h([1-6])>/gi, "</h$1>")
+
+      // Normalize whitespace between adjacent headings.
+      .replace(/<\/h([1-6])>\s*<h([1-6])>/gi, "</h$1><h$2>")
+
+      // Preserve horizontal rules as block elements.
+      .replace(/<hr\s*\/?>/gi, "<hr>")
+  );
 };
 
 /**
@@ -158,7 +171,7 @@ const ViewBoxComponent = computed(() => {
               });
             }
 
-            // Render a real, reactive Quasar input.
+            // Keep a real, reactive Quasar input.
             return h(QInput, {
               key: variable.name,
               dense: true,
@@ -188,39 +201,3 @@ const ViewBoxComponent = computed(() => {
   };
 });
 </script>
-
-<style scoped>
-.answer-content {
-  display: inline-block;
-}
-
-.answer-expression {
-  line-height: 2.5;
-}
-
-.answer-text {
-  display: inline;
-}
-
-.inline-answer-input {
-  vertical-align: middle;
-}
-
-.inline-answer-input :deep(.q-field__control) {
-  border-radius: 6px;
-  background-color: #f5f9ff;
-}
-
-.inline-answer-input :deep(.q-field__native) {
-  padding-left: 8px;
-  padding-right: 8px;
-}
-
-.inline-answer-input :deep(.q-field__control:before) {
-  border-color: #9dbbe8;
-}
-
-.inline-answer-input :deep(.q-field--focused .q-field__control:after) {
-  border-color: var(--q-primary);
-}
-</style>

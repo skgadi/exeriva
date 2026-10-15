@@ -87,7 +87,7 @@ const interpretedStudentAnswer = computed(() => {
       math.reviver
     ) as GSK_VARIABLE_EXPRESSION;
     varVal.variableValue = interpreted;
-    console.log("varVal", varVal, interpreted);
+    //console.log("varVal", varVal, interpreted);
     displayVariable(varVal);
     return `${varVal.variableDisplayValue}`;
   } else {

@@ -1,0 +1,167 @@
+.answer-content {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Main container for text and reactive Vue components. */
+.answer-expression {
+  display: block;
+  white-space: normal;
+  line-height: 2.2;
+}
+
+/* HTML fragments generated from Markdown. */
+.answer-text {
+  display: contents;
+  white-space: normal;
+}
+
+/* Paragraphs should not force a new line. */
+.answer-text p {
+  display: inline;
+  margin: 0;
+  padding: 0;
+}
+
+/* Preserve the normal block behavior of Markdown headings. */
+.answer-text h1,
+.answer-text h2,
+.answer-text h3,
+.answer-text h4,
+.answer-text h5,
+.answer-text h6 {
+  display: block;
+  line-height: 1.4;
+  font-weight: bold;
+  margin: 0.5em 0;
+  white-space: normal;
+}
+
+.answer-text h1 {
+  font-size: 2em;
+}
+
+.answer-text h2 {
+  font-size: 1.5em;
+}
+
+.answer-text h3 {
+  font-size: 1.17em;
+}
+
+.answer-text h4 {
+  font-size: 1em;
+}
+
+.answer-text h5 {
+  font-size: 0.83em;
+}
+
+.answer-text h6 {
+  font-size: 0.67em;
+}
+
+/* Compact inline answer input */
+.inline-answer-input {
+  display: inline-flex;
+  vertical-align: baseline;
+  width: 100px;
+  max-width: 100%;
+  margin: 0 3px;
+  font-size: 0.85em;
+  line-height: 1.2;
+}
+
+/* Reduce the input control height */
+.inline-answer-input .q-field__control,
+.inline-answer-input .q-field__native {
+  min-height: 24px;
+  height: 24px;
+  font-size: inherit;
+}
+
+/* Reduce horizontal and vertical padding */
+.inline-answer-input .q-field__control {
+  padding: 0 6px;
+}
+
+.inline-answer-input .q-field__native {
+  padding: 0;
+  line-height: 24px;
+}
+
+/* Remove extra space around the field */
+.inline-answer-input .q-field__inner,
+.inline-answer-input .q-field__bottom {
+  min-width: 0;
+}
+
+.inline-answer-input .q-field__bottom {
+  display: none;
+}
+
+/* Horizontal rules remain on their own line. */
+.answer-text hr {
+  display: block;
+  border: 0;
+  border-top: 1px solid currentColor;
+  margin: 0.75em 0;
+}
+
+/* Lists retain their normal block layout. */
+.answer-text ul,
+.answer-text ol {
+  display: block;
+  margin: 0.5em 0;
+  padding-left: 2em;
+}
+
+.answer-text li {
+  display: list-item;
+}
+
+/* Blockquotes retain their normal block layout. */
+.answer-text blockquote {
+  display: block;
+  margin: 0.5em 0;
+  padding-left: 1em;
+  border-left: 3px solid currentColor;
+}
+
+/* Code blocks remain separate blocks. */
+.answer-text pre {
+  display: block;
+  overflow-x: auto;
+  white-space: pre;
+  margin: 0.5em 0;
+}
+
+/* Inline code remains inline. */
+.answer-text code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Tables preserve their tabular layout. */
+.answer-text table {
+  display: table;
+  border-collapse: collapse;
+  max-width: 100%;
+}
+
+.answer-text th,
+.answer-text td {
+  padding: 4px 8px;
+  border: 1px solid currentColor;
+}
+
+/* Images should not overflow the answer container. */
+.answer-text img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Explicit line breaks remain line breaks. */
+.answer-text br {
+  display: initial;
+}
