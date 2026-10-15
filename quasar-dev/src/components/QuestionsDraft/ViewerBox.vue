@@ -1,6 +1,6 @@
 <template>
   <div ref="content" class="q-px-xs answer-content">
-    <component :is="ViewBoxComponent" />
+    <component :is="ViewBoxComponent" :key="draftText" />
   </div>
 </template>
 
@@ -102,18 +102,11 @@ const renderHtmlFragment = (html: string): string => {
 /**
  * Re-render mathematics when the draft or variables change.
  */
-watch(
-  [() => props.draftText, () => variables.value],
-  async () => {
-    await nextTick();
-    await renderMath();
-  },
-  {
-    deep: true,
-    flush: "post",
-    immediate: true
-  }
-);
+watch([() => props.draftText, () => variables.value], renderMath, {
+  deep: true,
+  flush: "post",
+  immediate: true
+});
 
 /**
  * Escape a string for use in a regular expression.

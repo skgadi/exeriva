@@ -2,26 +2,46 @@ import * as math from "mathjs";
 import type { GSK_VARIABLE_EXPRESSION } from "@/library/types/variables";
 
 export const interpretUserInput = (input: string): math.MathNumericType => {
-  // Implementation for interpreting user input
-  // clear the mathjs parser and evaluate the input
   try {
     const parser = math.parser();
     const result = parser.evaluate(input);
-    // if result is not MathNumericType, return NaN
+
+    const type = math.typeOf(result);
+
     if (
-      !(
-        math.typeOf(result) === "number" ||
-        math.typeOf(result) === "Complex" ||
-        math.typeOf(result) === "BigNumber" ||
-        math.typeOf(result) === "Fraction"
-      )
+      type !== "number" &&
+      type !== "Complex" &&
+      type !== "BigNumber" &&
+      type !== "Fraction"
     ) {
       return NaN;
     }
-    return result;
+
+    return result as math.MathNumericType;
   } catch (error) {
     console.warn(`Error interpreting user input: ${input}`, error);
     return NaN;
+  }
+};
+
+const isValidNumericValue = (value: math.MathNumericType): boolean => {
+  switch (math.typeOf(value)) {
+    case "number":
+      return Number.isFinite(value as number);
+
+    case "Complex": {
+      const z = value as math.Complex;
+      return Number.isFinite(z.re) && Number.isFinite(z.im);
+    }
+
+    case "BigNumber":
+      return (value as math.BigNumber).isFinite();
+
+    case "Fraction":
+      return true;
+
+    default:
+      return false;
   }
 };
 
@@ -32,24 +52,32 @@ export const isCorrectAnswer = (
     if (!inExpression.studentAnswer) {
       return false;
     }
-    const studentInput = inExpression.studentAnswer.studentInput;
-    const requiredPrecision = inExpression.studentAnswer.requiredPrecision;
 
-    const studentValue = interpretUserInput(studentInput);
-    if (isNaN(studentValue as number)) {
+    const { studentInput, requiredPrecision } = inExpression.studentAnswer;
+
+    if (!studentInput.trim() || !Number.isFinite(requiredPrecision)) {
       return false;
     }
 
+    const studentValue = interpretUserInput(studentInput);
     const correctValue = inExpression.variableValue;
+
+    if (
+      !isValidNumericValue(studentValue) ||
+      !isValidNumericValue(correctValue)
+    ) {
+      return false;
+    }
+
+    // For complex numbers, math.abs returns the magnitude:
+    // |a + bi| = sqrt(a² + b²)
     const absoluteDifference = math.abs(
       math.subtract(studentValue, correctValue),
     );
 
-    const isSmaller = math.smallerEq(
-      absoluteDifference,
-      math.pow(10, -requiredPrecision),
-    );
-    return !!isSmaller;
+    const tolerance = math.pow(10, -requiredPrecision);
+
+    return math.smallerEq(absoluteDifference, tolerance) as boolean;
   } catch (error) {
     console.warn("[SKGadi]", "Error checking answer correctness", error);
     return false;
