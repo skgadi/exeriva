@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, ref, h, watch } from "vue";
+import { computed, nextTick, ref, h, watch, VNodeChild } from "vue";
 
 import { marked } from "marked";
 import { QInput } from "quasar";
@@ -115,6 +115,20 @@ watch(
   }
 );
 
+/**
+ * Escape a string for use in a regular expression.
+ */
+const escapeRegExp = (value: string): string => {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+};
+
+/**
+ * Render Markdown HTML while preserving its structure.
+ *
+ * Answerable variables are converted into placeholder elements before
+ * HTML parsing. During recursive rendering, each placeholder becomes
+ * a reactive Quasar QInput inside its original HTML parent.
+ */
 const ViewBoxComponent = computed(() => {
   return {
     setup() {
@@ -128,53 +142,78 @@ const ViewBoxComponent = computed(() => {
           variables.value
         );
 
-        const parts = finalOut.split(variablePassingTextSignature);
+        // Map placeholder IDs to variable names.
+        const variableNames = new Map<string, string>();
+        let placeholderIndex = 0;
 
-        return h(
-          "div",
-          {
-            class: "answer-expression"
-          },
-          parts.map((part, index) => {
-            if (part === "") {
+        // Match a complete answerable-variable signature pair.
+        const signatureRegex = new RegExp(
+          `${escapeRegExp(variablePassingTextSignature)}([\\s\\S]*?)${escapeRegExp(variablePassingTextSignature)}`,
+          "g"
+        );
+
+        // Replace answerable variables with HTML-safe placeholders
+        // before parsing the HTML.
+        const htmlWithPlaceholders = finalOut.replace(
+          signatureRegex,
+          (_match, variableName: string) => {
+            const id = String(placeholderIndex++);
+
+            variableNames.set(id, variableName.trim());
+
+            return `<gsk-variable-placeholder data-variable-id="${id}"></gsk-variable-placeholder>`;
+          }
+        );
+
+        // Parse the HTML while preserving tables and their cells.
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlWithPlaceholders, "text/html");
+
+        /**
+         * Recursively convert DOM nodes into Vue VNodes.
+         */
+        const renderNode = (node: Node): VNodeChild => {
+          // Preserve text exactly as it appears in the HTML.
+          if (node.nodeType === Node.TEXT_NODE) {
+            return node.textContent ?? "";
+          }
+
+          if (node.nodeType !== Node.ELEMENT_NODE) {
+            return null;
+          }
+
+          const element = node as HTMLElement;
+          const tag = element.tagName.toLowerCase();
+
+          // Replace a variable placeholder with its reactive QInput.
+          if (tag === "gsk-variable-placeholder") {
+            const id = element.getAttribute("data-variable-id");
+            const variableName = id ? variableNames.get(id) : undefined;
+
+            if (!variableName) {
               return null;
             }
 
-            // Even indexes contain ordinary HTML.
-            if (index % 2 === 0) {
-              return h("span", {
-                class: "answer-text",
-                innerHTML: renderHtmlFragment(part)
-              });
-            }
-
-            // Odd indexes contain variable names.
             const variableIdx = variables.value.findIndex(
-              variable => variable.name === part.trim()
+              variable => variable.name === variableName
             );
 
             if (variableIdx === -1) {
-              return h("span", {
-                class: "answer-text",
-                innerHTML: renderHtmlFragment(part)
-              });
+              return variableName;
             }
 
             const variable = variables.value[
               variableIdx
             ] as GSK_VARIABLE_EXPRESSION;
 
-            if (!variable?.studentAnswer) {
-              return h("span", {
-                class: "answer-text",
-                innerHTML: renderHtmlFragment(part)
-              });
+            if (!variable.studentAnswer) {
+              return variableName;
             }
 
-            // Keep a real, reactive Quasar input.
             return h(QInput, {
-              key: variable.name,
+              key: `answer-${variable.name}`,
               dense: true,
+              outlined: true,
               placeholder: "Your answer",
               modelValue: variable.studentAnswer.studentInput,
 
@@ -184,17 +223,67 @@ const ViewBoxComponent = computed(() => {
                 }
               },
 
-              outlined: true,
-              class: "inline-answer-input",
-
-              style: {
-                display: "inline-flex",
-                verticalAlign: "middle",
-                width: "120px",
-                margin: "0 4px"
-              }
+              class: "inline-answer-input"
             });
-          })
+          }
+
+          /**
+           * Preserve TikZJax source scripts, but do not render ordinary scripts.
+           */
+          if (tag === "script") {
+            const type = element.getAttribute("type")?.toLowerCase();
+
+            if (type === "text/tikz") {
+              const scriptAttrs: Record<string, string> = {};
+
+              // Preserve every TikZJax configuration attribute.
+              for (const attribute of Array.from(element.attributes)) {
+                scriptAttrs[attribute.name] = attribute.value;
+              }
+
+              // Preserve the original TikZ/TeX source.
+              return h("script", scriptAttrs, element.textContent ?? "");
+            }
+
+            // Do not render ordinary scripts from the supplied HTML.
+            return null;
+          }
+
+          // Do not allow arbitrary style elements from the fragment.
+          if (tag === "style") {
+            return null;
+          }
+
+          // Preserve every HTML attribute, including table attributes.
+          const attrs: Record<string, string> = {};
+
+          for (const attribute of Array.from(element.attributes)) {
+            attrs[attribute.name] = attribute.value;
+          }
+
+          // Recursively render the children inside their original parents.
+          const children = Array.from(element.childNodes).map(renderNode);
+
+          return h(tag, attrs, children);
+        };
+
+        const children = Array.from(doc.body.childNodes).map(renderNode);
+
+        // Keep the existing CSS selectors working.
+        return h(
+          "div",
+          {
+            class: "answer-expression"
+          },
+          [
+            h(
+              "span",
+              {
+                class: "answer-text"
+              },
+              children
+            )
+          ]
         );
       };
     }

@@ -16,11 +16,19 @@
   white-space: normal;
 }
 
-/* Paragraphs should not force a new line. */
+/* Paragraphs preserve Markdown line breaks. */
 .answer-text p {
-  display: inline;
-  margin: 0;
+  display: block;
+  margin: 0.35em 0;
   padding: 0;
+}
+
+.answer-text p:first-child {
+  margin-top: 0;
+}
+
+.answer-text p:last-child {
+  margin-bottom: 0;
 }
 
 /* Preserve the normal block behavior of Markdown headings. */
@@ -61,10 +69,10 @@
   font-size: 0.67em;
 }
 
-/* Compact inline answer input */
+/* Compact inline answer input. */
 .inline-answer-input {
   display: inline-flex;
-  vertical-align: baseline;
+  vertical-align: middle;
   width: 100px;
   max-width: 100%;
   margin: 0 3px;
@@ -72,7 +80,7 @@
   line-height: 1.2;
 }
 
-/* Reduce the input control height */
+/* Reduce input control height. */
 .inline-answer-input .q-field__control,
 .inline-answer-input .q-field__native {
   min-height: 24px;
@@ -80,7 +88,7 @@
   font-size: inherit;
 }
 
-/* Reduce horizontal and vertical padding */
+/* Reduce horizontal and vertical padding. */
 .inline-answer-input .q-field__control {
   padding: 0 6px;
 }
@@ -90,7 +98,7 @@
   line-height: 24px;
 }
 
-/* Remove extra space around the field */
+/* Remove extra space around the field. */
 .inline-answer-input .q-field__inner,
 .inline-answer-input .q-field__bottom {
   min-width: 0;
@@ -145,14 +153,30 @@
 /* Tables preserve their tabular layout. */
 .answer-text table {
   display: table;
-  border-collapse: collapse;
+  width: auto;
   max-width: 100%;
+  border-collapse: collapse;
+  margin: 0.5em 0;
+}
+
+.answer-text thead {
+  display: table-header-group;
+}
+
+.answer-text tbody {
+  display: table-row-group;
+}
+
+.answer-text tr {
+  display: table-row;
 }
 
 .answer-text th,
 .answer-text td {
+  display: table-cell;
   padding: 4px 8px;
   border: 1px solid currentColor;
+  vertical-align: middle;
 }
 
 /* Images should not overflow the answer container. */
@@ -164,4 +188,29 @@
 /* Explicit line breaks remain line breaks. */
 .answer-text br {
   display: initial;
+}
+
+/* Ensure compact inputs remain correctly sized inside tables and text. */
+.answer-text .inline-answer-input {
+  display: inline-flex;
+  vertical-align: middle;
+  width: 100px;
+  max-width: 100%;
+  margin: 0 3px;
+  font-size: 0.85em;
+  line-height: 1.2;
+}
+
+.answer-text .inline-answer-input .q-field__control {
+  min-height: 24px;
+  height: 24px;
+  padding: 0 6px;
+}
+
+.answer-text .inline-answer-input .q-field__native {
+  min-height: 24px;
+  height: 24px;
+  padding: 0;
+  line-height: 24px;
+  font-size: inherit;
 }
