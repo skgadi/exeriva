@@ -63,7 +63,30 @@ export interface GSK_VARIABLE_DATE_TIME extends GSK_VARIABLE_BASE {
 export interface GSK_STUDENT_ANSWER {
   studentInput: string;
   requiredPrecision: number;
-  inputStyle: "text"; // css style for the input box
+  style: {
+    width: number;
+    widthUnit: string;
+    backgroundColor: string;
+    textColor: string;
+    fontSize: number;
+    fontSizeUnit: string;
+    zoom: number;
+    textAlign: string;
+    borderRadius: number;
+    borderRadiusUnit: string;
+    borderThickness: number;
+    borderThicknessUnit: string;
+    borderStyle:
+      | "solid"
+      | "dashed"
+      | "dotted"
+      | "double"
+      | "groove"
+      | "ridge"
+      | "inset"
+      | "outset";
+    borderColor: string;
+  }; // css style for the input box
   credit: number;
   isCorrect: boolean;
 }

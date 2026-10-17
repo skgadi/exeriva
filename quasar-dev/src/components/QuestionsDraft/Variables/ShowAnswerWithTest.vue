@@ -1,5 +1,31 @@
 <template>
-  <div class="q-pa-md q-gutter-md row justify-center items-start">
+  <div
+    class="q-pa-md q-gutter-md row justify-center items-start"
+    v-if="variable.studentAnswer"
+  >
+    <div
+      style="
+        min-width: 200px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 0px;
+      "
+      class="row justify-center items-center bg-grey-2"
+    >
+      <div class="col">
+        <div
+          class="row items-center"
+          style="height: 40px; border-bottom: 1px solid #ccc"
+        >
+          <div class="col text-center"> Student's view settings</div>
+        </div>
+        <div class="q-pa-xl row justify-center">
+          <div>
+            <student-input-style v-model="variable.studentAnswer.style" />
+          </div>
+        </div>
+      </div>
+    </div>
     <div
       style="
         min-width: 200px;
@@ -17,7 +43,7 @@
           <div class="col text-center"> Student's view </div>
         </div>
         <div class="q-pa-xl row justify-center">
-          <div v-if="variable.studentAnswer" class="text-center">
+          <div v-if="variable.studentAnswer" class="text-center answer-content">
             <answering-element v-model="variable.studentAnswer" />
           </div>
         </div>
@@ -66,8 +92,11 @@ const variable = defineModel({
 
 import type { GSK_VARIABLE_EXPRESSION } from "@/library/types/variables";
 
+import "@/css/components/answer-content.scss";
+
 import AnsweringElement from "@/components/QuestionsDraft/Variables/AnsweringElement.vue";
 import DisplayTex from "@/components/ExtrasForQuasar/DisplayTex.vue";
+import StudentInputStyle from "@/components/QuestionsDraft/Variables/StudentInputStyle.vue";
 
 import { computed } from "vue";
 import * as math from "mathjs";

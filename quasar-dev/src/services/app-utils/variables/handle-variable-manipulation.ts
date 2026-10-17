@@ -83,7 +83,22 @@ const generateEmptyDateTime = (): GSK_VARIABLE_DATE_TIME => {
 const generateEmptyStudentAnswer = (): GSK_STUDENT_ANSWER => {
   return {
     studentInput: "2",
-    inputStyle: "text",
+    style: {
+      width: 40,
+      widthUnit: "px",
+      backgroundColor: "#eee",
+      textColor: "#000",
+      fontSize: 14,
+      fontSizeUnit: "px",
+      zoom: 1,
+      textAlign: "right",
+      borderRadius: 0,
+      borderRadiusUnit: "px",
+      borderThickness: 0,
+      borderThicknessUnit: "px",
+      borderStyle: "solid",
+      borderColor: "#000",
+    },
     credit: 0,
     requiredPrecision: 3,
     isCorrect: false,

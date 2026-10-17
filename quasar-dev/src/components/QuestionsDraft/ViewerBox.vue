@@ -1,6 +1,9 @@
 <template>
   <div ref="content" class="q-px-xs answer-content">
-    <component :is="ViewBoxComponent" :key="draftText" />
+    <component
+      :is="ViewBoxComponent"
+      :key="`${draftText}-${variablesRenderKey}`"
+    />
   </div>
 </template>
 
@@ -24,6 +27,10 @@ import "@quasar/quasar-ui-qmarkdown/dist/index.css";
 import "katex/dist/katex.min.css";
 
 import renderMathInElement from "katex/contrib/auto-render";
+import {
+  getOuterStyleFromInputStyle,
+  getInnerStyleFromInputStyle
+} from "@/services/app-utils/variables/styles";
 
 const props = defineProps({
   draftText: {
@@ -74,29 +81,6 @@ const renderMath = async () => {
       "option"
     ]
   } as Parameters<typeof renderMathInElement>[1]);
-};
-
-/**
- * Convert Markdown HTML into a fragment that supports inline QInput
- * components while preserving block-level headings and separators.
- */
-const renderHtmlFragment = (html: string): string => {
-  return (
-    html
-      // Remove paragraph wrappers while preserving their text inline.
-      .replace(/<p(?:\s[^>]*)?>/gi, "")
-      .replace(/<\/p>/gi, "<br>")
-
-      // Preserve headings as block elements.
-      .replace(/<h([1-6])(?:\s[^>]*)?>/gi, "<h$1>")
-      .replace(/<\/h([1-6])>/gi, "</h$1>")
-
-      // Normalize whitespace between adjacent headings.
-      .replace(/<\/h([1-6])>\s*<h([1-6])>/gi, "</h$1><h$2>")
-
-      // Preserve horizontal rules as block elements.
-      .replace(/<hr\s*\/?>/gi, "<hr>")
-  );
 };
 
 /**
@@ -207,9 +191,11 @@ const ViewBoxComponent = computed(() => {
               key: `answer-${variable.name}`,
               dense: true,
               outlined: true,
-              placeholder: "Your answer",
               modelValue: variable.studentAnswer.studentInput,
-
+              style: getOuterStyleFromInputStyle(variable.studentAnswer.style),
+              inputStyle: getInnerStyleFromInputStyle(
+                variable.studentAnswer.style
+              ),
               "onUpdate:modelValue": (val: string | number | null) => {
                 if (variable.studentAnswer) {
                   variable.studentAnswer.studentInput = val as string;
@@ -282,4 +268,19 @@ const ViewBoxComponent = computed(() => {
     }
   };
 });
+
+const variablesRenderKey = computed(() =>
+  JSON.stringify(
+    variables.value.map(variable => ({
+      name: variable.name,
+      value: "value" in variable ? variable.value : variable.variableValue,
+      studentInput:
+        "studentAnswer" in variable
+          ? variable.studentAnswer?.studentInput
+          : undefined,
+      style:
+        "studentAnswer" in variable ? variable.studentAnswer?.style : undefined
+    }))
+  )
+);
 </script>
