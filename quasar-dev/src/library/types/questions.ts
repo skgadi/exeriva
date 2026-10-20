@@ -15,7 +15,7 @@ export interface GSK_QUESTION_PAPER_DRAFT {
   header: GSK_DRAFT_ELEMENT;
   questions: {
     question: GSK_DRAFT_ELEMENT;
-    answers: GSK_DRAFT_ELEMENT_FOR_ANSWER;
+    //answers: GSK_DRAFT_ELEMENT_FOR_ANSWER;
     solution: GSK_DRAFT_ELEMENT;
   }[];
   footer: GSK_DRAFT_ELEMENT;

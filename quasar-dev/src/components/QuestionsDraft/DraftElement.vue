@@ -129,7 +129,7 @@
 <script setup lang="ts">
 const props = defineProps({
   section: {
-    type: String as () => "header" | "question" | "answer" | "footer",
+    type: String as () => "header" | "question" | "solution" | "footer",
     required: true
   }
 });
@@ -151,7 +151,6 @@ import { updateVariables } from "@/services/app-utils/variables/handle-variable-
 
 const appSettingsStore = useAppSettingsStore();
 
-const isExpanded = ref(false);
 const tab = ref("draft");
 const splitterPosition = ref(
   appSettingsStore.pinPreview ? appSettingsStore.pinnedPreviewSize : 100
@@ -184,22 +183,26 @@ const colorLabelLookup = {
   header: {
     headerClass: "bg-primary text-white",
     label: "Header",
-    icon: "mdi-page-layout-header"
+    icon: "mdi-page-layout-header",
+    defaultOpened: false
   },
   question: {
     headerClass: "bg-secondary text-white",
-    label: "Question",
-    icon: "mdi-help"
+    label: "Problem",
+    icon: "mdi-help",
+    defaultOpened: true
   },
-  answer: {
+  solution: {
     headerClass: "bg-accent text-white",
-    label: "Answer",
-    icon: "mdi-message-reply-text-outline"
+    label: "Solution",
+    icon: "mdi-message-reply-text-outline",
+    defaultOpened: true
   },
   footer: {
     headerClass: "bg-negative text-white",
     label: "Footer",
-    icon: "mdi-page-layout-footer"
+    icon: "mdi-page-layout-footer",
+    defaultOpened: false
   }
 };
 
@@ -209,4 +212,6 @@ watch(
     updateVariables(draftElement.value);
   }
 );
+
+const isExpanded = ref(colorLabelLookup[props.section]?.defaultOpened);
 </script>
