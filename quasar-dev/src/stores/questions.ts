@@ -69,6 +69,16 @@ export const useQuestionsStore = defineStore("questions", {
     getDraftById(id: string): GSK_QUESTION_PAPER_DRAFT | undefined {
       return this.questionPaperDrafts.find((d) => d.id === id);
     },
+    isDraftSaved(id: string, draft: GSK_QUESTION_PAPER_DRAFT): boolean {
+      const savedDraft = this.questionPaperDrafts.find((d) => d.id === id);
+      if (!savedDraft) {
+        return false;
+      }
+      return (
+        JSON.stringify(savedDraft, math.replacer) ===
+        JSON.stringify(draft, math.replacer)
+      );
+    },
   },
 });
 
