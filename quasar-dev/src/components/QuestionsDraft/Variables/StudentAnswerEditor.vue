@@ -23,19 +23,23 @@
           emit-value
           map-options
         />
-        <!--q-select
-        v-model="variable.inputStyle"
-        :options="['text']"
-        dense
-        outlined
-        label="Input style"
-      /-->
         <q-input
           v-model.number="variable.studentAnswer.credit"
           type="number"
           dense
           outlined
           label="Credit"
+        />
+        <q-input
+          v-model.number="variable.studentAnswer.expectedTime"
+          type="number"
+          dense
+          outlined
+          label="Expected Time (seconds)"
+        />
+        <q-checkbox
+          v-model="variable.studentAnswer.maintainStrictTimeLimit"
+          label="Is time strict?"
         />
       </template>
     </div>

@@ -1,7 +1,10 @@
 <template>
   <draft-element section="header" v-model="draftQuestionPaper.header" />
   <draft-element section="footer" v-model="draftQuestionPaper.footer" />
-  <draft-questions v-model="draftQuestionPaper.questions" />
+  <draft-questions
+    v-model:questions="draftQuestionPaper.questions"
+    v-model:settings="draftQuestionPaper.settings"
+  />
 </template>
 
 <script setup lang="ts">

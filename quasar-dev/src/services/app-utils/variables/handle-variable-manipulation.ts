@@ -105,6 +105,9 @@ const generateEmptyStudentAnswer = (): GSK_STUDENT_ANSWER => {
     },
     credit: 0,
     requiredPrecision: 3,
+    timeTaken: 0,
+    expectedTime: 0,
+    maintainStrictTimeLimit: false,
     isCorrect: false,
   };
 };

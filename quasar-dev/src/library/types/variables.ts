@@ -89,5 +89,8 @@ export interface GSK_STUDENT_ANSWER {
     borderColor: string;
   }; // css style for the input box
   credit: number;
+  timeTaken: number; // in seconds
+  expectedTime: number; // in seconds
+  maintainStrictTimeLimit: boolean; // if true, the student must answer within the expected times
   isCorrect: boolean;
 }

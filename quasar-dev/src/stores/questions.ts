@@ -10,7 +10,7 @@ export const useQuestionsStore = defineStore("questions", {
   }),
 
   getters: {
-    getQuestionpaperDisplay: (state) => {
+    getQuestionPaperDisplay: (state) => {
       return JSON.stringify(state.questionPaperDrafts, math.replacer);
     },
   },
@@ -49,11 +49,17 @@ export const useQuestionsStore = defineStore("questions", {
         header: {
           text: "",
           variables: [],
+          numberOfRepeats: 1,
         },
         questions: [],
         footer: {
           text: "",
           variables: [],
+          numberOfRepeats: 1,
+        },
+        settings: {
+          shuffleQuestions: false,
+          maintainStrictTimeLimit: false,
         },
       };
       return newDraft;

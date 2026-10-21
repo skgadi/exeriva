@@ -15,10 +15,13 @@ export interface GSK_QUESTION_PAPER_DRAFT {
   header: GSK_DRAFT_ELEMENT;
   questions: {
     question: GSK_DRAFT_ELEMENT;
-    //answers: GSK_DRAFT_ELEMENT_FOR_ANSWER;
     solution: GSK_DRAFT_ELEMENT;
   }[];
   footer: GSK_DRAFT_ELEMENT;
+  settings: {
+    shuffleQuestions: boolean;
+    maintainStrictTimeLimit: boolean;
+  };
 }
 
 export interface GSK_DRAFT_ELEMENT {
@@ -29,6 +32,7 @@ export interface GSK_DRAFT_ELEMENT {
     | GSK_VARIABLE_DATE_TIME
     | GSK_VARIABLE_EXPRESSION
   >;
+  numberOfRepeats: number;
 }
 
 export interface GSK_DRAFT_ELEMENT_FOR_ANSWER extends GSK_DRAFT_ELEMENT {
