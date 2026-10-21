@@ -1,11 +1,22 @@
 <template>
   <div class="q-pa-xs">
     <template v-for="(item, idx) in draftElement.variables" :key="idx">
-      <q-card class="q-mb-sm" v-if="draftElement.variables[idx] !== undefined">
+      <q-card
+        class="q-mb-sm"
+        v-if="draftElement.variables[idx] !== undefined"
+        :inert="draftElement.variables[idx].isEditBlocked"
+      >
         <q-bar dense>
           <div class="text-weight-bold"> #{{ item.name }} </div>
           <q-space />
-          <q-btn dense flat :label="item.type" class="q-mr-sm" align="right">
+          <q-btn
+            dense
+            flat
+            :label="item.type"
+            icon="mdi-menu-down"
+            class="q-mr-sm"
+            align="right"
+          >
             <q-menu>
               <q-list dense separator>
                 <q-item

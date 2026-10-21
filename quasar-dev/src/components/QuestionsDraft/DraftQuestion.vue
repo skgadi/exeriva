@@ -95,8 +95,32 @@ const emits = defineEmits(["move-up", "move-down", "delete"]);
 import DraftElement from "@/components/QuestionsDraft/DraftElement.vue";
 
 import type { GSK_QUESTION_PAPER_DRAFT } from "@/library/types/questions";
-
-import { ref } from "vue";
+import { ref, watch } from "vue";
+import { updateSolutionVariables } from "@/services/app-utils/variables/handle-variable-manipulation";
 
 const innerTab = ref("problem");
+
+watch(
+  () => [question.value.question.variables, question.value.solution.variables],
+  () => {
+    const updatedVariables = updateSolutionVariables(
+      question.value.question.variables,
+      question.value.solution.variables
+    );
+
+    if (
+      JSON.stringify(updatedVariables) ===
+      JSON.stringify(question.value.solution.variables)
+    ) {
+      return;
+    }
+
+    question.value.solution.variables = updatedVariables;
+    console.log(
+      "Updated solution variables based on question variables:",
+      question.value.solution.variables.map(v => v.name).join(", ")
+    );
+  },
+  { deep: true }
+);
 </script>

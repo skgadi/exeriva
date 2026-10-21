@@ -18,6 +18,7 @@ interface GSK_VARIABLE_BASE {
   type: "number" | "expression" | "string" | "date-time";
   variableValue: MathNumericType | string | Date; // a mathjs representation of the variable value
   variableDisplayValue: string; // a LaTeX representation of the variableValue
+  isEditBlocked: boolean; // if true, the variable cannot be edited by the user
 }
 
 export interface GSK_VARIABLE_NUMBER extends GSK_VARIABLE_BASE {

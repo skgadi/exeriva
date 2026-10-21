@@ -11,6 +11,7 @@ import { extractVariablesFromText } from "@/services/app-utils/variables/generat
 const generateEmptyNumber = (): GSK_VARIABLE_NUMBER => {
   return {
     type: "number",
+    isEditBlocked: false,
     name: "",
     rangeReal: [1, 9],
     rangeImaginary: [1, 9],
@@ -37,6 +38,7 @@ const generateEmptyNumber = (): GSK_VARIABLE_NUMBER => {
 const generateEmptyExpression = (): GSK_VARIABLE_EXPRESSION => {
   return {
     type: "expression",
+    isEditBlocked: false,
     name: "",
     expression: "1+1",
     variableValue: 2,
@@ -61,6 +63,7 @@ const generateEmptyExpression = (): GSK_VARIABLE_EXPRESSION => {
 const generateEmptyString = (): GSK_VARIABLE_STRING => {
   return {
     type: "string",
+    isEditBlocked: false,
     name: "",
     values: "",
     options: [],
@@ -72,6 +75,7 @@ const generateEmptyString = (): GSK_VARIABLE_STRING => {
 const generateEmptyDateTime = (): GSK_VARIABLE_DATE_TIME => {
   return {
     type: "date-time",
+    isEditBlocked: false,
     name: "",
     range: [new Date(), new Date()],
     format: "YYYY-MM-DD",
@@ -155,4 +159,35 @@ export const setIsExpressionAnswerable = (
   } else {
     delete variable.studentAnswer;
   }
+};
+
+/**
+ * When a question is drafted, its solution should have all the question variables. The question variables should be locked.
+ * So, The the following function will be called when there is a change in questions variables. It will update the solution variables to match the question variables. It will also lock the solution variables.
+ *
+ */
+
+export const updateSolutionVariables = (
+  inQuestionVariables: GSK_DRAFT_ELEMENT["variables"],
+  inSolutionVariables: GSK_DRAFT_ELEMENT["variables"],
+) => {
+  // make sure all the question variables are removed
+  inSolutionVariables = inSolutionVariables.filter(
+    (variable) => !inQuestionVariables.some((v) => v.name === variable.name),
+  );
+  // make sure all the other variables are unlocked
+  inSolutionVariables.forEach((variable) => {
+    variable.isEditBlocked = false;
+  });
+
+  // make sure all the question variables are added on the top of the solution variables
+  // Also only these variable should be locked. The rest of the variables should be unlocked. So, we will set isEditBlocked to true for the question variables and false for the rest of the variables.
+  inSolutionVariables.unshift(
+    ...inQuestionVariables.map((variable) => ({
+      ...variable,
+      isEditBlocked: true,
+    })),
+  );
+
+  return inSolutionVariables;
 };
