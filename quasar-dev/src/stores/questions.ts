@@ -104,6 +104,33 @@ export const useQuestionsStore = defineStore("questions", {
       }
       return null;
     },
+    updateQuestionPaperDraft(updatedDraft: GSK_QUESTION_PAPER_DRAFT) {
+      const index = this.questionPaperDrafts.findIndex(
+        (d) => d.id === updatedDraft.id,
+      );
+      // if exists, ask confirmation to overwrite. Proceed only if confirmed. If not exists, add it.
+      const isSafeToUpdate = !this.questionPaperDrafts.some(
+        (d) => d.id === updatedDraft.id,
+      );
+      if (!isSafeToUpdate) {
+        const userConfirmed = window.confirm(
+          "Are you sure you want to overwrite the existing draft?",
+        );
+        if (!userConfirmed) {
+          return;
+        }
+      }
+      if (index !== -1) {
+        this.questionPaperDrafts[index] = JSON.parse(
+          JSON.stringify(updatedDraft, math.replacer),
+          math.reviver,
+        );
+      } else {
+        this.questionPaperDrafts.push(
+          JSON.parse(JSON.stringify(updatedDraft, math.replacer), math.reviver),
+        );
+      }
+    },
   },
 });
 

@@ -1,6 +1,18 @@
 <template>
   <template v-if="isEditPasswordCorrect">
     <div class="useful-width q-pa-md">
+      <div class="text-mono text-center q-mb-md text-h5">
+        <q-icon name="mdi-identifier" />:
+        <span
+          class="text-purple-14 bg-orange-1 q-px-sm q-py-xs rounded-borders"
+          >{{ questionToDraft.id }}</span
+        >
+        <copy-button
+          :text-to-copy="questionToDraft.id"
+          size="xs"
+          class="q-ml-sm bg-grey-2 text-grey-9"
+        />
+      </div>
       <div class="q-gutter-md row justify-center">
         <q-input
           class="col-4"
@@ -34,6 +46,8 @@
             icon="mdi-content-save-outline"
             @click="saveDraft"
             :disable="
+              questionToDraft.title.trim() === '' ||
+              questionToDraft.shortTitle.trim() === '' ||
               questionsStore.isDraftSaved(questionToDraft.id, questionToDraft)
             "
           />
@@ -45,6 +59,7 @@
             color="secondary"
             title="Download"
             icon="mdi-download-outline"
+            @click="downloadQuestionPaperNow"
           />
           <q-btn
             dense
@@ -131,11 +146,13 @@ const props = defineProps<{
 
 import DraftMain from "@/components/QuestionsDraft/DraftMain.vue";
 import PasswordInput from "@/components/ExtrasForQuasar/PasswordInput.vue";
+import CopyButton from "@/components/ExtrasForQuasar/CopyButton.vue";
 
 import { onBeforeUnmount, ref, watch, computed } from "vue";
 import { useQuestionsStore } from "@/stores/questions";
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter } from "vue-router";
 import { Dialog } from "quasar";
+import { downloadQuestionPaper } from "@/services/app-utils/variables/questions";
 
 const questionsStore = useQuestionsStore();
 const router = useRouter();
@@ -267,4 +284,8 @@ const isEditPasswordCorrect = computed(() => {
   }
   return enteredPasswordToEdit.value === passwords.editPassword;
 });
+
+const downloadQuestionPaperNow = async () => {
+  await downloadQuestionPaper(questionToDraft.value);
+};
 </script>
