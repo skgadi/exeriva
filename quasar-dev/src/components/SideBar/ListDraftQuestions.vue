@@ -41,41 +41,16 @@
           <q-item-label caption>Upload a question paper</q-item-label>
         </q-item-section>
       </q-item>
-
-      <template
-        v-for="(question, index) in filteredQuestions"
-        :key="question.id"
-      >
-        <q-item clickable v-ripple :to="'/questions/' + question.id">
-          <q-item-section>
-            <q-item-label>{{ question.shortTitle }}</q-item-label>
-            <q-item-label caption>{{ question.title }}</q-item-label>
-            <q-item-label class="text-mono" caption style="font-size: 0.7rem">
-              <q-icon name="mdi-identifier" />:<span>{{ question.id }}</span>
-            </q-item-label>
-          </q-item-section>
-        </q-item>
-      </template>
+      <list-questions-element :filter="filter" />
     </q-list>
   </q-expansion-item>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { useQuestionsStore } from "@/stores/questions";
+import ListQuestionsElement from "@/components/SideBar/ListQuestionsElement.vue";
+
+import { ref } from "vue";
 import { uploadQuestionPaper } from "@/services/app-utils/variables/questions";
 
-const questionsStore = useQuestionsStore();
-
 const filter = ref("");
-const filteredQuestions = computed(() => {
-  if (!filter.value) {
-    return questionsStore.questionPaperDrafts;
-  }
-  return questionsStore.questionPaperDrafts.filter(
-    q =>
-      q.shortTitle.toLowerCase().includes(filter.value.toLowerCase()) ||
-      q.title.toLowerCase().includes(filter.value.toLowerCase())
-  );
-});
 </script>

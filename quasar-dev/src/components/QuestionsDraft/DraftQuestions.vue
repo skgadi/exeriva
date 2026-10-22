@@ -1,6 +1,7 @@
 <template>
   <div class="q-pa-md">
     <div class="text-h6 q-mb-md"> Questions </div>
+
     <q-markup-table
       bordered
       class=""
@@ -16,23 +17,22 @@
             >{{ getTotalQuestions(questions) }}
             <q-btn
               dense
-              round
-              size="sm"
+              rounded
               no-caps
-              flat
-              class="q-px-md q-mr-sm"
+              outline
+              class="q-ml-sm"
               color="primary"
-              title="Add a question"
               icon="mdi-plus"
+              label="Add a new question"
               @click="addAQuestion"
           /></td>
         </tr>
         <tr>
           <td class="text-subtitle2 text-right">Total credits</td>
           <td class="text-subtitle2 text-center">:</td>
-          <td class="text-subtitle2">{{ getTotalCredits(questions) }}</td>
+          <td class="text-subtitle2">{{ getTotalCredits(questions) }} ₢</td>
         </tr>
-        <tr>
+        <tr title="Total expected time in HH:MM:SS format">
           <td class="text-subtitle2 text-right">Total expected time</td>
           <td class="text-subtitle2 text-center">:</td>
           <td class="text-subtitle2">{{
@@ -40,29 +40,23 @@
           }}</td>
         </tr>
         <tr>
-          <td class="text-subtitle2 text-right">Shuffle questions</td>
+          <td class="text-subtitle2 text-right">Settings</td>
           <td class="text-subtitle2 text-center">:</td>
           <td class="text-subtitle2">
-            <q-toggle
-              v-model="settings.shuffleQuestions"
+            <q-btn
               dense
-              color="primary"
-              label-position="left"
-            />
-          </td>
-        </tr>
-        <tr>
-          <td class="text-subtitle2 text-right">Maintain strict time limit</td>
-          <td class="text-subtitle2 text-center">:</td>
-          <td class="text-subtitle2">
-            <q-toggle
-              v-model="settings.maintainStrictTimeLimit"
-              dense
-              color="primary"
-              label-position="left"
-            />
-          </td>
-        </tr>
+              rounded
+              flat
+              icon="mdi-cog-outline"
+              label="Configure"
+              no-caps
+              title="Configure question paper settings"
+            >
+              <q-menu auto-close>
+                <question-settings-editor v-model:settings="settings" />
+              </q-menu>
+            </q-btn> </td
+        ></tr>
       </tbody>
     </q-markup-table>
 
@@ -91,6 +85,7 @@ const settings = defineModel("settings", {
 });
 
 import DraftQuestion from "@/components/QuestionsDraft/DraftQuestion.vue";
+import QuestionSettingsEditor from "@/components/QuestionsDraft/QuestionSettingsEditor.vue";
 
 import type { GSK_QUESTION_PAPER_DRAFT } from "@/library/types/questions";
 import {

@@ -13,6 +13,7 @@ export interface GSK_QUESTION_PAPER_DRAFT {
     editPassword: string;
     answerPassword: string;
     solutionPassword: string;
+    showAnswersPassword: string;
   };
   header: GSK_DRAFT_ELEMENT;
   questions: {
@@ -25,6 +26,13 @@ export interface GSK_QUESTION_PAPER_DRAFT {
     maintainStrictTimeLimit: boolean;
     showSolutionAfterSubmission: boolean;
     showSolutionAfterEachQuestion: boolean;
+    showAnswersAfterSubmission: boolean;
+    showAnswersAfterEachQuestion: boolean;
+    displayQuestionsInOnePage: boolean;
+    allowChangingAnswers: boolean;
+    allowSeeingPreviousAnswers: boolean;
+    finishInOneSession: boolean;
+    allowSkippingQuestions: boolean;
   };
 }
 

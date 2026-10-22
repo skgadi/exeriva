@@ -117,6 +117,15 @@
                     />
                   </q-item-section>
                 </q-item>
+                <q-item>
+                  <q-item-section>
+                    <password-input
+                      v-model="questionToDraft.access.showAnswersPassword"
+                      label="Password to view answers"
+                      icon="mdi-lock-percent-outline"
+                    />
+                  </q-item-section>
+                </q-item>
               </q-list>
             </q-menu>
           </q-btn>

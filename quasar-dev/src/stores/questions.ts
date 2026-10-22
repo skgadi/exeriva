@@ -47,6 +47,7 @@ export const useQuestionsStore = defineStore("questions", {
           editPassword: "",
           answerPassword: "",
           solutionPassword: "",
+          showAnswersPassword: "",
         },
         header: {
           text: "",
@@ -64,6 +65,13 @@ export const useQuestionsStore = defineStore("questions", {
           maintainStrictTimeLimit: false,
           showSolutionAfterSubmission: false,
           showSolutionAfterEachQuestion: false,
+          showAnswersAfterSubmission: false,
+          showAnswersAfterEachQuestion: false,
+          displayQuestionsInOnePage: false,
+          allowChangingAnswers: false,
+          allowSeeingPreviousAnswers: false,
+          finishInOneSession: false,
+          allowSkippingQuestions: false,
         },
       };
       return newDraft;
