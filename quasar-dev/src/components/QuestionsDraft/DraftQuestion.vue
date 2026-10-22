@@ -24,55 +24,57 @@
           </q-tabs>
           <div class="text-center q-py-xs">
             <table class="q-mx-auto">
-              <tr title="Credits per question">
-                <td class="text-overline">₢</td>
-                <td>:</td>
-                <td class="text-weight-bold text-subtitle text-right">{{
-                  getCreditsPerQuestion(question.question)
-                }}</td>
-              </tr>
-              <tr title="Expected time per question">
-                <td class="text-overline">⏱</td>
-                <td>:</td>
-                <td class="text-weight-bold text-subtitle text-right">{{
-                  getExpectedTimePerQuestion(question.question)
-                }}</td>
-              </tr>
-              <tr title="Repeat count for this question">
-                <td class="text-overline">⟳</td>
-                <td>:</td>
-                <td class="text-weight-bold text-subtitle text-right">
-                  <div class="row items-center justify-end q-gutter-sm">
-                    <div class="col-auto">
-                      {{ question.question.numberOfRepeats }}
-                    </div>
-                    <div class="col-auto">
-                      <div class="column">
-                        <div class="col">
-                          <q-icon
-                            dense
-                            class="cursor-pointer"
-                            name="mdi-chevron-up"
-                            @click="question.question.numberOfRepeats++"
-                          />
-                        </div>
-                        <div class="col">
-                          <q-icon
-                            dense
-                            class="cursor-pointer"
-                            name="mdi-chevron-down"
-                            @click="
-                              question.question.numberOfRepeats > 1
-                                ? question.question.numberOfRepeats--
-                                : null
-                            "
-                          />
+              <tbody>
+                <tr title="Credits per question">
+                  <td class="text-overline">₢</td>
+                  <td>:</td>
+                  <td class="text-weight-bold text-subtitle text-right">{{
+                    getCreditsPerQuestion(question.question)
+                  }}</td>
+                </tr>
+                <tr title="Expected time per question">
+                  <td class="text-overline">⏱</td>
+                  <td>:</td>
+                  <td class="text-weight-bold text-subtitle text-right">{{
+                    getExpectedTimePerQuestion(question.question)
+                  }}</td>
+                </tr>
+                <tr title="Repeat count for this question">
+                  <td class="text-overline">⟳</td>
+                  <td>:</td>
+                  <td class="text-weight-bold text-subtitle text-right">
+                    <div class="row items-center justify-end q-gutter-sm">
+                      <div class="col-auto">
+                        {{ question.question.numberOfRepeats }}
+                      </div>
+                      <div class="col-auto">
+                        <div class="column">
+                          <div class="col">
+                            <q-icon
+                              dense
+                              class="cursor-pointer"
+                              name="mdi-chevron-up"
+                              @click="question.question.numberOfRepeats++"
+                            />
+                          </div>
+                          <div class="col">
+                            <q-icon
+                              dense
+                              class="cursor-pointer"
+                              name="mdi-chevron-down"
+                              @click="
+                                question.question.numberOfRepeats > 1
+                                  ? question.question.numberOfRepeats--
+                                  : null
+                              "
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                </td>
-              </tr>
+                  </td>
+                </tr>
+              </tbody>
             </table>
           </div>
 
@@ -81,6 +83,7 @@
               dense
               round
               push
+              title="Move question up"
               icon="mdi-chevron-up"
               @click="emits('move-up', questionIndex)"
               :disable="questionIndex === 0"
@@ -91,6 +94,7 @@
               dense
               round
               push
+              title="Move question down"
               icon="mdi-chevron-down"
               @click="emits('move-down', questionIndex)"
               :disable="questionIndex === questionsLength - 1"
@@ -101,6 +105,7 @@
               dense
               round
               push
+              title="Delete question"
               color="negative"
               icon="mdi-delete"
               @click="emits('delete', questionIndex)"

@@ -43,9 +43,11 @@ export const useQuestionsStore = defineStore("questions", {
         id: crypto.randomUUID(),
         title: "",
         shortTitle: "",
-        editPassword: "",
-        answerPassword: "",
-        solutionPassword: "",
+        access: {
+          editPassword: "",
+          answerPassword: "",
+          solutionPassword: "",
+        },
         header: {
           text: "",
           variables: [],
@@ -60,6 +62,8 @@ export const useQuestionsStore = defineStore("questions", {
         settings: {
           shuffleQuestions: false,
           maintainStrictTimeLimit: false,
+          showSolutionAfterSubmission: false,
+          showSolutionAfterEachQuestion: false,
         },
       };
       return newDraft;
@@ -84,6 +88,21 @@ export const useQuestionsStore = defineStore("questions", {
         JSON.stringify(savedDraft, math.replacer) ===
         JSON.stringify(draft, math.replacer)
       );
+    },
+    getAccessPasswords(id: string): {
+      editPassword: string;
+      answerPassword: string;
+      solutionPassword: string;
+    } | null {
+      const draft = this.questionPaperDrafts.find((d) => d.id === id);
+      if (draft) {
+        return {
+          editPassword: draft.access.editPassword,
+          answerPassword: draft.access.answerPassword,
+          solutionPassword: draft.access.solutionPassword,
+        };
+      }
+      return null;
     },
   },
 });

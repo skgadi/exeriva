@@ -9,9 +9,11 @@ export interface GSK_QUESTION_PAPER_DRAFT {
   id: string;
   title: string;
   shortTitle: string;
-  editPassword: string;
-  answerPassword: string;
-  solutionPassword: string;
+  access: {
+    editPassword: string;
+    answerPassword: string;
+    solutionPassword: string;
+  };
   header: GSK_DRAFT_ELEMENT;
   questions: {
     question: GSK_DRAFT_ELEMENT;
@@ -21,6 +23,8 @@ export interface GSK_QUESTION_PAPER_DRAFT {
   settings: {
     shuffleQuestions: boolean;
     maintainStrictTimeLimit: boolean;
+    showSolutionAfterSubmission: boolean;
+    showSolutionAfterEachQuestion: boolean;
   };
 }
 
