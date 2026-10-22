@@ -1,9 +1,8 @@
 <template>
   <q-expansion-item
     expand-separator
-    default-opened
     icon="mdi-tooltip-question-outline"
-    label="Questions"
+    label="Question papers"
     caption="Draft your questions here"
   >
     <q-list bordered separator>
