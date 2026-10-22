@@ -74,6 +74,7 @@
         @move-up="moveQuestionUp"
         @move-down="moveQuestionDown"
         @delete="removeAQuestion"
+        @duplicate="duplicateQuestion"
       />
     </template>
   </div>
@@ -98,6 +99,7 @@ import {
   getTotalCredits
 } from "@/services/app-utils/variables/questions";
 import { convertTimeInSecondsToHMS } from "@/services/app-utils/common/date-time";
+import * as math from "mathjs";
 
 const addAQuestion = () => {
   questions.value.push({
@@ -136,5 +138,14 @@ const moveQuestionDown = (index: number) => {
     questions.value[index] = questions.value[index + 1]!;
     questions.value[index + 1] = temp!;
   }
+};
+
+const duplicateQuestion = (index: number) => {
+  const questionToDuplicate = questions.value[index];
+  const duplicatedQuestion = JSON.parse(
+    JSON.stringify(questionToDuplicate, math.replacer),
+    math.reviver
+  );
+  questions.value.splice(index + 1, 0, duplicatedQuestion);
 };
 </script>

@@ -80,7 +80,18 @@
 
           <div class="text-center q-py-xs">
             <q-btn
-              dense
+              size="xs"
+              round
+              push
+              title="Duplicate question"
+              icon="mdi-content-copy"
+              @click="emits('duplicate', questionIndex)"
+            />
+          </div>
+
+          <div class="text-center q-py-xs">
+            <q-btn
+              size="xs"
               round
               push
               title="Move question up"
@@ -91,7 +102,7 @@
           </div>
           <div class="text-center q-pb-xs">
             <q-btn
-              dense
+              size="xs"
               round
               push
               title="Move question down"
@@ -102,7 +113,7 @@
           </div>
           <div class="text-center q-pb-xs">
             <q-btn
-              dense
+              size="xs"
               round
               push
               title="Delete question"
@@ -149,7 +160,7 @@ const props = defineProps({
   }
 });
 
-const emits = defineEmits(["move-up", "move-down", "delete"]);
+const emits = defineEmits(["move-up", "move-down", "delete", "duplicate"]);
 
 import DraftElement from "@/components/QuestionsDraft/DraftElement.vue";
 
