@@ -113,6 +113,19 @@ const prepareQuestionElementForAnswering = (element: GSK_DRAFT_ELEMENT) => {
   makeStudentInputsEmpty(element);
 };
 
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+
+    // The exclamation marks (!) tell TypeScript that these indices are guaranteed to exist
+    [shuffled[i], shuffled[j]] = [shuffled[j]!, shuffled[i]!];
+  }
+
+  return shuffled;
+}
+
 /**
  * The following should be achieved:
  * 1. Fix the question paper draft to a single value by resolving any random numbers.
@@ -162,5 +175,10 @@ export const prepareQuestionPaperForAnswering = (
       fixedQuestionPaper.questions.push(questionCopy);
     }
   });
+
+  // Shuffle the questions if the setting is enabled
+  if (fixedQuestionPaper.settings.shuffleQuestions) {
+    fixedQuestionPaper.questions = shuffleArray(fixedQuestionPaper.questions);
+  }
   return fixedQuestionPaper;
 };

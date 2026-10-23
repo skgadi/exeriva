@@ -1,6 +1,6 @@
 <template>
   <template v-if="answerSheet">
-    <main-window :answer-sheet="answerSheet" />
+    <main-window v-model="answerSheet" />
   </template>
   <template v-else>
     <div class="q-pa-md">
