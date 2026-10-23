@@ -49,7 +49,7 @@ export default defineConfig((ctx) => {
       vueRouterMode: "history", // available values: 'hash', 'history'
       // vueRouterBase,
 
-      // publicPath: '/',
+      publicPath: "/",
       // define: {},
       // defineEnv: {}
       // ignorePublicFolder: true,
