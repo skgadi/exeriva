@@ -1,0 +1,1 @@
+import{N as e,W as t,_ as n,g as r,u as i}from"./runtime-core.esm-bundler-DkXlXl9m.js";import{t as a}from"./QBtn-CsYORDIN.js";import{t as o}from"./QPage-Boqrk2Si.js";var s=n({__name:`second`,setup(n){return(n,s)=>(e(),i(o,{class:`flex flex-center`},{default:t(()=>[r(a,{color:`secondary`,to:`/`,label:`Go to Index Page`,"no-caps":``})]),_:1}))}});export{s as default};
