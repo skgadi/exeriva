@@ -1,0 +1,1 @@
+import{N as e,_ as t,u as n}from"./runtime-core.esm-bundler-DkXlXl9m.js";import{t as r}from"./MainWindow-CV59Bb7V.js";var i=t({__name:`new-question`,setup(t){return(t,i)=>(e(),n(r))}});export{i as default};

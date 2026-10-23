@@ -270,7 +270,11 @@ const ViewBoxComponent = computed(() => {
           return h(tag, attrs, children);
         };
 
-        const children = Array.from(doc.body.childNodes).map(renderNode);
+        // Leading <script> elements are parsed into <head>, so include them.
+        const children = [
+          ...Array.from(doc.head.childNodes),
+          ...Array.from(doc.body.childNodes)
+        ].map(renderNode);
 
         // Keep the existing CSS selectors working.
         return h(
