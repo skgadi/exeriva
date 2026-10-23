@@ -1,5 +1,12 @@
 import * as math from "mathjs";
 import type { GSK_VARIABLE_EXPRESSION } from "@/library/types/variables";
+import type {
+  GSK_QUESTION_PAPER_DRAFT,
+  GSK_DRAFT_ELEMENT,
+} from "@/library/types/questions";
+import { generateRandomNumber } from "@/services/app-utils/variables/generator";
+import { evaluateExpression } from "@/services/app-utils/variables/evaluate-expressions";
+import { updateSolutionVariables } from "@/services/app-utils/variables/handle-variable-manipulation";
 
 export const interpretUserInput = (input: string): math.MathNumericType => {
   try {
@@ -82,4 +89,71 @@ export const isCorrectAnswer = (
     console.warn("[SKGadi]", "Error checking answer correctness", error);
     return false;
   }
+};
+
+const makeStudentInputsEmpty = (element: GSK_DRAFT_ELEMENT) => {
+  element.variables.forEach((variable) => {
+    if (variable.type !== "expression") {
+      return;
+    }
+    if (!variable.studentAnswer) {
+      return;
+    }
+    variable.studentAnswer.studentInput = "";
+  });
+};
+
+/**
+ * The following should be achieved:
+ * 1. Fix the question paper draft to a single value by resolving any random numbers.
+ * 2. Remove fields where the student needs to provide input.
+ * 3. if questions requires to be repeated, here is the place to repeat them and make a single question paper ready for answering.
+ * 4. Establish the times to be 60s if the question is not having any time limit specified
+ * The question paper draft has several possible values because of random numbers, here we fix to a single value to make the question paper ready for answering. This function will also remove fields where student needs to fill
+ * @param questionPaper The question paper draft is input here
+ */
+export const prepareQuestionPaperForAnswering = (
+  questionPaper: GSK_QUESTION_PAPER_DRAFT,
+): GSK_QUESTION_PAPER_DRAFT => {
+  const fixedQuestionPaper: GSK_QUESTION_PAPER_DRAFT = JSON.parse(
+    JSON.stringify(questionPaper, math.replacer),
+    math.reviver,
+  );
+  // remove all the questions
+  fixedQuestionPaper.questions = [];
+  // Add questions based on number of repeats
+  questionPaper.questions.forEach((question) => {
+    for (let i = 0; i < question.question.numberOfRepeats; i++) {
+      const questionCopy: GSK_QUESTION_PAPER_DRAFT["questions"][number] =
+        JSON.parse(JSON.stringify(question, math.replacer), math.reviver);
+      // Generate the question variables to a single value by resolving any random numbers
+      questionCopy.question.variables.forEach((variable) => {
+        if (variable.type === "number") {
+          generateRandomNumber(variable);
+        }
+      });
+      evaluateExpression(questionCopy.question.variables);
+      // Remove student inputs
+      makeStudentInputsEmpty(questionCopy.question);
+
+      // Generate the solution variables to a single value by resolving any random numbers
+      questionCopy.solution.variables.forEach((variable) => {
+        if (variable.type === "number") {
+          generateRandomNumber(variable);
+        }
+      });
+      // Copy the question variables to the solution variables
+      questionCopy.solution.variables = updateSolutionVariables(
+        questionCopy.question.variables,
+        questionCopy.solution.variables,
+      );
+      // evaluate the solution expressions
+      evaluateExpression(questionCopy.solution.variables);
+      // Remove student inputs
+      makeStudentInputsEmpty(questionCopy.solution);
+
+      fixedQuestionPaper.questions.push(questionCopy);
+    }
+  });
+  return fixedQuestionPaper;
 };

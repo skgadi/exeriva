@@ -76,13 +76,21 @@ export const useQuestionsStore = defineStore("questions", {
       };
       return newDraft;
     },
-    getCopyOrCreateNewDraft(id: string | null): GSK_QUESTION_PAPER_DRAFT {
+    getCopyOfDraft(id: string): GSK_QUESTION_PAPER_DRAFT | undefined {
       const draft = this.questionPaperDrafts.find((d) => d.id === id);
       if (draft) {
         return JSON.parse(JSON.stringify(draft, math.replacer), math.reviver);
-      } else {
+      }
+    },
+    getCopyOrCreateNewDraft(id: string | null): GSK_QUESTION_PAPER_DRAFT {
+      if (!id) {
         return this.getANewQuestionPaperDraft();
       }
+      const draft = this.getCopyOfDraft(id);
+      if (draft) {
+        return draft;
+      }
+      return this.getANewQuestionPaperDraft();
     },
     getDraftById(id: string): GSK_QUESTION_PAPER_DRAFT | undefined {
       return this.questionPaperDrafts.find((d) => d.id === id);

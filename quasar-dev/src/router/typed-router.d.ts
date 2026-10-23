@@ -37,6 +37,7 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       Record<never, never>,
       | '//(index)'
+      | '//answers/[[aid]]'
       | '//questions/[[qid]]'
       | '//questions/new-question'
       | '//second'
@@ -46,6 +47,13 @@ declare module 'vue-router/auto-routes' {
       '/',
       Record<never, never>,
       Record<never, never>,
+      | never
+    >,
+    '//answers/[[aid]]': RouteRecordInfo<
+      '//answers/[[aid]]',
+      '/answers/:aid?',
+      { aid?: ParamValueZeroOrOne<true> },
+      { aid?: ParamValueZeroOrOne<false> },
       | never
     >,
     '//questions/[[qid]]': RouteRecordInfo<
@@ -93,6 +101,7 @@ declare module 'vue-router/auto-routes' {
       routes:
         | '/'
         | '//(index)'
+        | '//answers/[[aid]]'
         | '//questions/[[qid]]'
         | '//questions/new-question'
         | '//second'
@@ -108,6 +117,14 @@ declare module 'vue-router/auto-routes' {
         | never
       pathParamNames:
         | never
+    }
+    'src/pages/index/answers/[[aid]].vue': {
+      routes:
+        | '//answers/[[aid]]'
+      views:
+        | never
+      pathParamNames:
+        | 'aid'
     }
     'src/pages/index/questions/[[qid]].vue': {
       routes:

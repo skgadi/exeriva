@@ -190,10 +190,6 @@ watch(
     }
 
     question.value.solution.variables = updatedVariables;
-    console.log(
-      "Updated solution variables based on question variables:",
-      question.value.solution.variables.map(v => v.name).join(", ")
-    );
   },
   { deep: true }
 );
