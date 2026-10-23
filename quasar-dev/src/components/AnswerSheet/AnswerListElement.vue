@@ -1,15 +1,27 @@
 <template>
   <q-item @click="emit('click', props.answerSheet)">
     <q-item-section>
-      <div class="text-h6"
-        >{{ props.answerSheet.questionPaper.shortTitle }}
-      </div>
-      <div class="text-subtitle2"> {{ props.answerSheet.studentName }} </div>
-      <div class="text-subtitle2">
-        {{
-          props.answerSheet.state.isSubmitted ? "Submitted" : "Not Submitted"
-        }}
-      </div>
+      <q-item-label>{{ answerSheet.questionPaper.shortTitle }}</q-item-label>
+      <q-item-label caption>{{ answerSheet.questionPaper.title }}</q-item-label>
+      <q-item-label class="text-mono" caption style="font-size: 0.7rem">
+        <q-icon name="mdi-identifier" />:<span>{{ answerSheet.id }}</span>
+      </q-item-label>
+    </q-item-section>
+    <q-item-section side>
+      <template v-if="!props.answerSheet.state.isSubmitted">
+        <q-circular-progress
+          show-value
+          :value="props.answerSheet.state.percentageFinished"
+          size="30px"
+          color="teal"
+          track-color="grey-3"
+        >
+          {{ props.answerSheet.state.percentageFinished }}%
+        </q-circular-progress>
+      </template>
+      <template v-else>
+        <q-icon name="mdi-check-outline" />
+      </template>
     </q-item-section>
   </q-item>
 </template>

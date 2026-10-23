@@ -45,9 +45,7 @@
             label="View submitted answer sheet"
           >
             <template
-              v-for="(
-                answerSheet, index
-              ) in answersStore.getAllCompletedAnswerSheets()"
+              v-for="(answerSheet, index) in answersStore.submittedAnswers"
               :key="index"
             >
               <answer-list-element
@@ -66,9 +64,7 @@
             label="Continue answering"
           >
             <template
-              v-for="(
-                answerSheet, index
-              ) in answersStore.getAllIncompleteAnswerSheets()"
+              v-for="(answerSheet, index) in answersStore.unSubmittedAnswers"
               :key="index"
             >
               <answer-list-element

@@ -37,6 +37,12 @@ export interface GSK_ANSWER_TO_QUESTION_PAPER {
   state: {
     isSubmitted: boolean;
     displayingQuestionIndex: number;
+    percentageFinished: number;
+    percentageSeen: number;
+    gradeInPercentage: number;
+    percentageAnswered: number;
+    timeSpentInSeconds: number;
+    totalExpectedTimeInSeconds: number;
   };
   log: {
     answered: GSK_ANSWER_ANSWERED[];

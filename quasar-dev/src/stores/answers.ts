@@ -10,10 +10,11 @@ export const useAnswersStore = defineStore("answers", {
     answers: [] as GSK_ANSWER_TO_QUESTION_PAPER[],
   }),
   getters: {
-    getAnswerById: (state) => {
-      return (id: string) => {
-        return state.answers.find((a) => a.id === id);
-      };
+    unSubmittedAnswers: (state) => {
+      return state.answers.filter((a) => !a.state.isSubmitted);
+    },
+    submittedAnswers: (state) => {
+      return state.answers.filter((a) => a.state.isSubmitted);
     },
   },
   actions: {
@@ -28,6 +29,12 @@ export const useAnswersStore = defineStore("answers", {
         state: {
           isSubmitted: false,
           displayingQuestionIndex: 0,
+          percentageFinished: 0,
+          percentageSeen: 0,
+          gradeInPercentage: 0,
+          percentageAnswered: 0,
+          timeSpentInSeconds: 0,
+          totalExpectedTimeInSeconds: 0,
         },
         log: {
           answered: [],
@@ -44,12 +51,6 @@ export const useAnswersStore = defineStore("answers", {
       id: string,
     ): GSK_ANSWER_TO_QUESTION_PAPER | undefined {
       return this.answers.find((a) => a.id === id);
-    },
-    getAllCompletedAnswerSheets(): GSK_ANSWER_TO_QUESTION_PAPER[] {
-      return this.answers.filter((a) => a.state.isSubmitted);
-    },
-    getAllIncompleteAnswerSheets(): GSK_ANSWER_TO_QUESTION_PAPER[] {
-      return this.answers.filter((a) => !a.state.isSubmitted);
     },
   },
 });
