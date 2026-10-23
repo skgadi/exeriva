@@ -11,7 +11,7 @@
 import { computed, nextTick, ref, h, watch, VNodeChild } from "vue";
 
 import { marked } from "marked";
-import { QInput } from "quasar";
+import { QIcon, QInput } from "quasar";
 
 import {
   changeVariableNamesToValues,
@@ -36,6 +36,11 @@ const props = defineProps({
   draftText: {
     type: String,
     required: true
+  },
+  showCorrectTick: {
+    type: Boolean,
+    required: false,
+    default: false
   }
 });
 
@@ -187,23 +192,42 @@ const ViewBoxComponent = computed(() => {
               return variableName;
             }
 
-            return h(QInput, {
-              key: `answer-${variable.name}`,
-              dense: true,
-              outlined: true,
-              modelValue: variable.studentAnswer.studentInput,
-              style: getOuterStyleFromInputStyle(variable.studentAnswer.style),
-              inputStyle: getInnerStyleFromInputStyle(
-                variable.studentAnswer.style
-              ),
-              "onUpdate:modelValue": (val: string | number | null) => {
-                if (variable.studentAnswer) {
-                  variable.studentAnswer.studentInput = val as string;
-                }
-              },
+            return [
+              h(QInput, {
+                key: `answer-${variable.name}`,
+                dense: true,
+                outlined: true,
+                modelValue: variable.studentAnswer.studentInput,
+                style: getOuterStyleFromInputStyle(
+                  variable.studentAnswer.style
+                ),
+                inputStyle: getInnerStyleFromInputStyle(
+                  variable.studentAnswer.style
+                ),
+                // Delay model updates so the re-render doesn't fire on every keystroke
+                debounce: 1500,
+                "onUpdate:modelValue": (val: string | number | null) => {
+                  if (variable.studentAnswer) {
+                    variable.studentAnswer.studentInput = val as string;
+                  }
+                },
 
-              class: "inline-answer-input"
-            });
+                class: "inline-answer-input"
+              }),
+              h(QIcon, {
+                key: `tick-${variable.name}`,
+                name: variable.studentAnswer.isCorrect
+                  ? "mdi-check-circle"
+                  : "mdi-close-circle",
+                color: variable.studentAnswer.isCorrect
+                  ? "positive"
+                  : "negative",
+                class: [
+                  "inline-answer-tick",
+                  props.showCorrectTick ? "visible" : "invisible"
+                ]
+              })
+            ];
           }
 
           /**

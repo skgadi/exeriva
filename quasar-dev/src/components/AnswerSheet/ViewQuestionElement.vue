@@ -4,6 +4,7 @@
       :draft-text="questionElement.text"
       v-model="questionElement.variables"
       :inert="readOnly"
+      :show-correct-tick="readOnly"
     />
   </div>
 </template>
