@@ -4,6 +4,7 @@
     icon="mdi-tooltip-question-outline"
     label="Question papers"
     caption="Draft your questions here"
+    :to="`/questions`"
   >
     <q-list bordered separator>
       <q-item>

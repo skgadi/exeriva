@@ -103,6 +103,16 @@ const makeStudentInputsEmpty = (element: GSK_DRAFT_ELEMENT) => {
   });
 };
 
+const prepareQuestionElementForAnswering = (element: GSK_DRAFT_ELEMENT) => {
+  element.variables.forEach((variable) => {
+    if (variable.type === "number") {
+      generateRandomNumber(variable);
+    }
+  });
+  evaluateExpression(element.variables);
+  makeStudentInputsEmpty(element);
+};
+
 /**
  * The following should be achieved:
  * 1. Fix the question paper draft to a single value by resolving any random numbers.
@@ -127,14 +137,7 @@ export const prepareQuestionPaperForAnswering = (
       const questionCopy: GSK_QUESTION_PAPER_DRAFT["questions"][number] =
         JSON.parse(JSON.stringify(question, math.replacer), math.reviver);
       // Generate the question variables to a single value by resolving any random numbers
-      questionCopy.question.variables.forEach((variable) => {
-        if (variable.type === "number") {
-          generateRandomNumber(variable);
-        }
-      });
-      evaluateExpression(questionCopy.question.variables);
-      // Remove student inputs
-      makeStudentInputsEmpty(questionCopy.question);
+      prepareQuestionElementForAnswering(questionCopy.question);
 
       // Generate the solution variables to a single value by resolving any random numbers
       questionCopy.solution.variables.forEach((variable) => {
@@ -151,6 +154,10 @@ export const prepareQuestionPaperForAnswering = (
       evaluateExpression(questionCopy.solution.variables);
       // Remove student inputs
       makeStudentInputsEmpty(questionCopy.solution);
+
+      // Make header and footers prepared
+      prepareQuestionElementForAnswering(fixedQuestionPaper.header);
+      prepareQuestionElementForAnswering(fixedQuestionPaper.footer);
 
       fixedQuestionPaper.questions.push(questionCopy);
     }

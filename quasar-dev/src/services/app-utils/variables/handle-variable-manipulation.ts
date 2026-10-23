@@ -7,6 +7,7 @@ import type {
   GSK_STUDENT_ANSWER,
 } from "@/library/types/variables";
 import { extractVariablesFromText } from "@/services/app-utils/variables/generator";
+import * as math from "mathjs";
 
 const generateEmptyNumber = (): GSK_VARIABLE_NUMBER => {
   return {
@@ -183,10 +184,22 @@ export const updateSolutionVariables = (
     variable.isEditBlocked = false;
   });
 
+  const copyOfQuestionVariables: GSK_DRAFT_ELEMENT["variables"] =
+    inQuestionVariables.map((variable) => ({
+      ...JSON.parse(JSON.stringify(variable, math.replacer), math.reviver),
+      isEditBlocked: true,
+    }));
+  // replace all studentAnswerable to false.
+  copyOfQuestionVariables.forEach((variable) => {
+    if (variable.type === "expression") {
+      delete variable.studentAnswer;
+    }
+  });
+
   // make sure all the question variables are added on the top of the solution variables
   // Also only these variable should be locked. The rest of the variables should be unlocked. So, we will set isEditBlocked to true for the question variables and false for the rest of the variables.
   inSolutionVariables.unshift(
-    ...inQuestionVariables.map((variable) => ({
+    ...copyOfQuestionVariables.map((variable) => ({
       ...variable,
       isEditBlocked: true,
     })),

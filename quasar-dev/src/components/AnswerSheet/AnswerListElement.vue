@@ -1,5 +1,10 @@
 <template>
-  <q-item @click="emit('click', props.answerSheet)">
+  <q-item
+    @click="emit('click', props.answerSheet)"
+    :to="
+      props.enableToOpenAnswerSheet ? `/answers/${props.answerSheet.id}` : null
+    "
+  >
     <q-item-section>
       <q-item-label>{{ answerSheet.questionPaper.shortTitle }}</q-item-label>
       <q-item-label caption>{{ answerSheet.questionPaper.title }}</q-item-label>
@@ -30,6 +35,10 @@ const props = defineProps({
   answerSheet: {
     type: Object as () => GSK_ANSWER_TO_QUESTION_PAPER,
     required: true
+  },
+  enableToOpenAnswerSheet: {
+    type: Boolean,
+    default: true
   }
 });
 

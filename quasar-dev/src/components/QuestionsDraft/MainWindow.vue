@@ -21,9 +21,7 @@
           outlined
           rounded
           dense
-          clearable
           autofocus
-          :rules="[val => !!val || 'A title is required']"
         />
         <q-input
           class="col-3"
@@ -32,8 +30,6 @@
           outlined
           rounded
           dense
-          clearable
-          :rules="[val => !!val || 'A short title is required']"
         />
         <div>
           <q-btn
