@@ -9,16 +9,31 @@ export interface GSK_QUESTION_PAPER_DRAFT {
   id: string;
   title: string;
   shortTitle: string;
-  editPassword: string;
-  answerPassword: string;
-  solutionPassword: string;
+  access: {
+    editPassword: string;
+    answerPassword: string;
+    solutionPassword: string;
+    showAnswersPassword: string;
+  };
   header: GSK_DRAFT_ELEMENT;
   questions: {
     question: GSK_DRAFT_ELEMENT;
-    answers: GSK_DRAFT_ELEMENT_FOR_ANSWER;
     solution: GSK_DRAFT_ELEMENT;
   }[];
   footer: GSK_DRAFT_ELEMENT;
+  settings: {
+    shuffleQuestions: boolean;
+    maintainStrictTimeLimit: boolean;
+    showSolutionAfterSubmission: boolean;
+    showSolutionAfterEachQuestion: boolean;
+    showAnswersAfterSubmission: boolean;
+    showAnswersAfterEachQuestion: boolean;
+    displayQuestionsInOnePage: boolean;
+    allowChangingAnswers: boolean;
+    allowSeeingPreviousAnswers: boolean;
+    finishInOneSession: boolean;
+    allowSkippingQuestions: boolean;
+  };
 }
 
 export interface GSK_DRAFT_ELEMENT {
@@ -29,6 +44,7 @@ export interface GSK_DRAFT_ELEMENT {
     | GSK_VARIABLE_DATE_TIME
     | GSK_VARIABLE_EXPRESSION
   >;
+  numberOfRepeats: number;
 }
 
 export interface GSK_DRAFT_ELEMENT_FOR_ANSWER extends GSK_DRAFT_ELEMENT {

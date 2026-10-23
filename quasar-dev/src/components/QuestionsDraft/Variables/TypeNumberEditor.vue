@@ -1,22 +1,21 @@
 <template>
-  <div class="q-gutter-md row justify-center items-center">
+  <div class="q-pa-md q-gutter-md row justify-center items-start">
     <number-details-editor
-      :title="variable.isComplex ? 'Real part' : ''"
+      title="Real part"
       v-model:type="variable.typeReal"
       v-model:range="variable.rangeReal"
     />
     <number-details-editor
-      v-if="variable.isComplex"
-      :title="'Imaginary part'"
+      title="Imaginary part"
       v-model:type="variable.typeImaginary"
       v-model:range="variable.rangeImaginary"
+      v-model:show-elements="variable.isComplex"
+      show-checkbox
     />
-  </div>
-  <div>
-    <q-checkbox v-model="variable.isComplex" label="Is it a complex number?" />
-  </div>
-  <div ref="texContent" class="q-pa-md">
-    <display-tex :tex-content="`$${variable.variableDisplayValue}$`" />
+    <show-example-value
+      :value-to-display="variable.variableDisplayValue"
+      @refresh="refreshExampleValue"
+    />
   </div>
 </template>
 
@@ -31,7 +30,7 @@ const emit = defineEmits<{
 }>();
 
 import NumberDetailsEditor from "@/components/QuestionsDraft/Variables/NumberDetailsEditor.vue";
-import DisplayTex from "@/components/ExtrasForQuasar/DisplayTex.vue";
+import ShowExampleValue from "@/components/QuestionsDraft/Variables/ShowExampleValue.vue";
 
 import { watch } from "vue";
 import { generateRandomNumber } from "@/services/app-utils/variables/generator";
@@ -43,13 +42,16 @@ watch(
     variable.value.typeReal,
     variable.value.rangeImaginary,
     variable.value.typeImaginary,
-    variable.value.isComplex,
-    variable.value.size
+    variable.value.isComplex
   ],
   () => {
-    generateRandomNumber(variable.value);
-    emit("needsEvaluation");
+    refreshExampleValue();
   },
   { deep: true }
 );
+
+const refreshExampleValue = () => {
+  generateRandomNumber(variable.value);
+  emit("needsEvaluation");
+};
 </script>

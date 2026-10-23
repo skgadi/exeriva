@@ -110,7 +110,7 @@
             <q-tab-panel name="preview">
               <viewer-box
                 :draft-text="draftElement.text"
-                :variables="draftElement.variables"
+                v-model="draftElement.variables"
               />
             </q-tab-panel>
           </q-tab-panels>
@@ -118,7 +118,7 @@
         <template v-slot:after>
           <viewer-box
             :draft-text="draftElement.text"
-            :variables="draftElement.variables"
+            v-model="draftElement.variables"
           />
         </template>
       </q-splitter>
@@ -129,7 +129,7 @@
 <script setup lang="ts">
 const props = defineProps({
   section: {
-    type: String as () => "header" | "question" | "answer" | "footer",
+    type: String as () => "header" | "question" | "solution" | "footer",
     required: true
   }
 });
@@ -140,17 +140,17 @@ const draftElement = defineModel({
 });
 
 import EditorBox from "@/components/QuestionsDraft/EditorBox.vue";
-import viewerBox from "@/components/QuestionsDraft/ViewerBox.vue";
+import ViewerBox from "@/components/QuestionsDraft/ViewerBox.vue";
 import EditVariablesBox from "@/components/QuestionsDraft/EditVariablesBox.vue";
 
 import { ref, watch } from "vue";
 import type { GSK_DRAFT_ELEMENT } from "@/library/types/questions";
 import { useAppSettingsStore } from "@/stores/app-settings";
 import { evaluateExpression } from "@/services/app-utils/variables/evaluate-expressions";
+import { updateVariables } from "@/services/app-utils/variables/handle-variable-manipulation";
 
 const appSettingsStore = useAppSettingsStore();
 
-const isExpanded = ref(false);
 const tab = ref("draft");
 const splitterPosition = ref(
   appSettingsStore.pinPreview ? appSettingsStore.pinnedPreviewSize : 100
@@ -183,22 +183,35 @@ const colorLabelLookup = {
   header: {
     headerClass: "bg-primary text-white",
     label: "Header",
-    icon: "mdi-page-layout-header"
+    icon: "mdi-page-layout-header",
+    defaultOpened: false
   },
   question: {
     headerClass: "bg-secondary text-white",
-    label: "Question",
-    icon: "mdi-help"
+    label: "Problem",
+    icon: "mdi-help",
+    defaultOpened: true
   },
-  answer: {
+  solution: {
     headerClass: "bg-accent text-white",
-    label: "Answer",
-    icon: "mdi-message-reply-text-outline"
+    label: "Solution",
+    icon: "mdi-message-reply-text-outline",
+    defaultOpened: true
   },
   footer: {
     headerClass: "bg-negative text-white",
     label: "Footer",
-    icon: "mdi-page-layout-footer"
+    icon: "mdi-page-layout-footer",
+    defaultOpened: false
   }
 };
+
+watch(
+  () => draftElement.value.text,
+  () => {
+    updateVariables(draftElement.value);
+  }
+);
+
+const isExpanded = ref(colorLabelLookup[props.section]?.defaultOpened);
 </script>

@@ -1,0 +1,209 @@
+import type { GSK_DRAFT_ELEMENT } from "@/library/types/questions";
+import type {
+  GSK_VARIABLE_DATE_TIME,
+  GSK_VARIABLE_EXPRESSION,
+  GSK_VARIABLE_NUMBER,
+  GSK_VARIABLE_STRING,
+  GSK_STUDENT_ANSWER,
+} from "@/library/types/variables";
+import { extractVariablesFromText } from "@/services/app-utils/variables/generator";
+import * as math from "mathjs";
+
+const generateEmptyNumber = (): GSK_VARIABLE_NUMBER => {
+  return {
+    type: "number",
+    isEditBlocked: false,
+    name: "",
+    rangeReal: [1, 9],
+    rangeImaginary: [1, 9],
+    typeReal: {
+      type: "integer",
+      showFormat: "decimal",
+      roundTo: 2,
+      displayRoundTo: 2,
+      fractionNumeratorDigits: 1,
+    },
+    typeImaginary: {
+      type: "integer",
+      showFormat: "decimal",
+      roundTo: 2,
+      displayRoundTo: 2,
+      fractionNumeratorDigits: 1,
+    },
+    isComplex: false,
+    variableValue: 1,
+    variableDisplayValue: "1",
+  };
+};
+
+const generateEmptyExpression = (): GSK_VARIABLE_EXPRESSION => {
+  return {
+    type: "expression",
+    isEditBlocked: false,
+    name: "",
+    expression: "1+1",
+    variableValue: 2,
+    variableDisplayValue: "2",
+    typeReal: {
+      type: "integer",
+      showFormat: "decimal",
+      roundTo: 2,
+      displayRoundTo: 2,
+      fractionNumeratorDigits: 1,
+    },
+    typeImaginary: {
+      type: "integer",
+      showFormat: "decimal",
+      roundTo: 2,
+      displayRoundTo: 2,
+      fractionNumeratorDigits: 1,
+    },
+  };
+};
+
+const generateEmptyString = (): GSK_VARIABLE_STRING => {
+  return {
+    type: "string",
+    isEditBlocked: false,
+    name: "",
+    values: "",
+    options: [],
+    variableDisplayValue: "",
+    variableValue: "",
+  };
+};
+
+const generateEmptyDateTime = (): GSK_VARIABLE_DATE_TIME => {
+  return {
+    type: "date-time",
+    isEditBlocked: false,
+    name: "",
+    range: [new Date(), new Date()],
+    format: "YYYY-MM-DD",
+    variableDisplayValue: "",
+    variableValue: new Date(),
+  };
+};
+
+const generateEmptyStudentAnswer = (): GSK_STUDENT_ANSWER => {
+  return {
+    studentInput: "2",
+    style: {
+      width: 40,
+      widthUnit: "px",
+      backgroundColor: "#eee",
+      textColor: "#000",
+      fontSize: 14,
+      fontSizeUnit: "px",
+      zoom: 1,
+      textAlign: "right",
+      borderRadius: 0,
+      borderRadiusUnit: "px",
+      borderThickness: 0,
+      borderThicknessUnit: "px",
+      borderStyle: "solid",
+      borderColor: "#000",
+    },
+    credit: 0,
+    requiredPrecision: 3,
+    timeTaken: 0,
+    expectedTime: 0,
+    maintainStrictTimeLimit: false,
+    isCorrect: false,
+  };
+};
+
+export const getDefaultValue = (
+  type: GSK_DRAFT_ELEMENT["variables"][0]["type"],
+): GSK_DRAFT_ELEMENT["variables"][0] => {
+  switch (type) {
+    case "number":
+      return generateEmptyNumber();
+    case "expression":
+      return generateEmptyExpression();
+    case "string":
+      return generateEmptyString();
+    case "date-time":
+      return generateEmptyDateTime();
+  }
+};
+
+export const updateVariables = (inElement: GSK_DRAFT_ELEMENT) => {
+  const variablesInElement = extractVariablesFromText(inElement.text);
+  // variablesInElement is the correct one. We keep the order from draftElements.variables
+  // but we also add any new variables that are in the text but not in the variables array
+  // We also remove any variables that are in the variables array but not in the text
+  const newVariables = variablesInElement.filter(
+    (variable) => !inElement.variables.some((v) => v.name === variable),
+  );
+  const removedVariables = inElement.variables.filter(
+    (variable) => !variablesInElement.includes(variable.name),
+  );
+  inElement.variables = [
+    ...inElement.variables.filter(
+      (variable) => !removedVariables.some((v) => v.name === variable.name),
+    ),
+
+    ...newVariables.map((variable) => {
+      const newVariable = getDefaultValue("number");
+      newVariable.name = variable;
+      return newVariable;
+    }),
+  ];
+};
+
+export const setIsExpressionAnswerable = (
+  variable: GSK_VARIABLE_EXPRESSION,
+  isAnswerable: boolean,
+) => {
+  if (isAnswerable) {
+    if (!variable.studentAnswer) {
+      variable.studentAnswer = generateEmptyStudentAnswer();
+    }
+  } else {
+    delete variable.studentAnswer;
+  }
+};
+
+/**
+ * When a question is drafted, its solution should have all the question variables. The question variables should be locked.
+ * So, The the following function will be called when there is a change in questions variables. It will update the solution variables to match the question variables. It will also lock the solution variables.
+ *
+ */
+
+export const updateSolutionVariables = (
+  inQuestionVariables: GSK_DRAFT_ELEMENT["variables"],
+  inSolutionVariables: GSK_DRAFT_ELEMENT["variables"],
+) => {
+  // make sure all the question variables are removed
+  inSolutionVariables = inSolutionVariables.filter(
+    (variable) => !inQuestionVariables.some((v) => v.name === variable.name),
+  );
+  // make sure all the other variables are unlocked
+  inSolutionVariables.forEach((variable) => {
+    variable.isEditBlocked = false;
+  });
+
+  const copyOfQuestionVariables: GSK_DRAFT_ELEMENT["variables"] =
+    inQuestionVariables.map((variable) => ({
+      ...JSON.parse(JSON.stringify(variable, math.replacer), math.reviver),
+      isEditBlocked: true,
+    }));
+  // replace all studentAnswerable to false.
+  copyOfQuestionVariables.forEach((variable) => {
+    if (variable.type === "expression") {
+      delete variable.studentAnswer;
+    }
+  });
+
+  // make sure all the question variables are added on the top of the solution variables
+  // Also only these variable should be locked. The rest of the variables should be unlocked. So, we will set isEditBlocked to true for the question variables and false for the rest of the variables.
+  inSolutionVariables.unshift(
+    ...copyOfQuestionVariables.map((variable) => ({
+      ...variable,
+      isEditBlocked: true,
+    })),
+  );
+
+  return inSolutionVariables;
+};

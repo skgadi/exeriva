@@ -1,10 +1,10 @@
 <template>
   <q-expansion-item
     expand-separator
-    default-opened
     icon="mdi-tooltip-question-outline"
-    label="Questions"
+    label="Question papers"
     caption="Draft your questions here"
+    :to="`/questions`"
   >
     <q-list bordered separator>
       <q-item>
@@ -17,52 +17,41 @@
             v-model="filter"
             placeholder="Search questions..."
           >
-            <template v-slot:before>
+            <template v-slot:prepend>
               <q-icon class="q-ml-xs" name="mdi-magnify" slot="prepend" />
-            </template>
-            <template v-slot:after>
-              <q-btn
-                class="q-mr-xs"
-                flat
-                round
-                dense
-                icon="mdi-plus"
-                to="/questions/new-question"
-              />
             </template>
           </q-input>
         </q-item-section>
       </q-item>
-      <template
-        v-for="(question, index) in filteredQuestions"
-        :key="question.id"
-      >
-        <q-item clickable v-ripple :to="'/questions/' + question.id">
-          <q-item-section>
-            <q-item-label>{{ question.shortTitle }}</q-item-label>
-            <q-item-label caption>{{ question.title }}</q-item-label>
-          </q-item-section>
-        </q-item>
-      </template>
+      <q-separator />
+      <q-item clickable v-ripple to="/questions/new-question">
+        <q-item-section avatar>
+          <q-icon name="mdi-new-box" />
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>Draft</q-item-label>
+          <q-item-label caption>Create a new question paper</q-item-label>
+        </q-item-section>
+      </q-item>
+      <q-item clickable v-ripple @click="uploadQuestionPaper">
+        <q-item-section avatar>
+          <q-icon name="mdi-upload-box-outline" />
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>Upload</q-item-label>
+          <q-item-label caption>Upload a question paper</q-item-label>
+        </q-item-section>
+      </q-item>
+      <list-questions-element :filter="filter" />
     </q-list>
   </q-expansion-item>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { useQuestionsStore } from "@/stores/questions";
+import ListQuestionsElement from "@/components/SideBar/ListQuestionsElement.vue";
 
-const questionsStore = useQuestionsStore();
+import { ref } from "vue";
+import { uploadQuestionPaper } from "@/services/app-utils/variables/questions";
 
 const filter = ref("");
-const filteredQuestions = computed(() => {
-  if (!filter.value) {
-    return questionsStore.questionPaperDrafts;
-  }
-  return questionsStore.questionPaperDrafts.filter(
-    q =>
-      q.shortTitle.toLowerCase().includes(filter.value.toLowerCase()) ||
-      q.title.toLowerCase().includes(filter.value.toLowerCase())
-  );
-});
 </script>

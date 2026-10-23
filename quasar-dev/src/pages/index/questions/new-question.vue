@@ -1,5 +1,5 @@
 <template>
-  <main-window is-new="true" />
+  <main-window />
 </template>
 
 <script setup lang="ts">
