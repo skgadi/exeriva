@@ -1,51 +1,38 @@
-#!/bin/bash
 
-# Define relative paths based on script location in public/tikzjax
-SRC_DIR="1.6.0"
-DEST_DIR="prepared-1.6.0"
-TEMP_DIR="temp"
+#!/usr/bin/env bash
+set -euo pipefail
 
-# Ensure temporary and destination directories exist
-mkdir -p "$DEST_DIR"
-mkdir -p "$TEMP_DIR"
+# Run from the Quasar project root.
+PACKAGE="node_modules/@rod2ik/tikzjax"
+DEST="public/tikzjax/prepared/dist"
 
-# Enable recursive globbing for subfolders
-shopt -s globstar nullglob
+# Locate the original distribution.
+if [[ -f "$PACKAGE/dist/tikzjax.min.js" ]]; then
+    SOURCE_DIST="$PACKAGE/dist"
+elif [[ -f "$PACKAGE/tikzjax.min.js" ]]; then
+    SOURCE_DIST="$PACKAGE"
+else
+    echo "ERROR: TikZJax distribution not found in $PACKAGE"
+    echo "Check that @rod2ik/tikzjax@1.6.0 is installed."
+    exit 1
+fi
 
-# Iterate recursively through all files in the source directory
-for file in "$SRC_DIR"/**; do
-  # Check if it's a regular file (skip directories)
-  if [ -f "$file" ]; then
-    
-    # Calculate relative path to preserve subfolder structure
-    rel_path="${file#"$SRC_DIR"/}"
-    target_dir="$DEST_DIR/$(dirname "$rel_path")"
-    
-    # Ensure target subfolder exists in destination
-    mkdir -p "$target_dir"
-    
-    if [[ "$file" == *.gz ]]; then
-      # 1. Copy to temporary directory
-      temp_file="$TEMP_DIR/$(basename "$file")"
-      cp "$file" "$temp_file"
-      
-      # 2. Compress again with gzip (creates temp_file.gz)
-      gzip -f "$temp_file"
-      
-      # 3. Move double-zipped file to destination while keeping the original filename
-      mv "${temp_file}.gz" "$DEST_DIR/$rel_path"
-      
-      # 4. Remove original source file
-      rm "$file"
-    else
-      # Move non-gz file directly (automatically deletes original from source)
-      mv "$file" "$DEST_DIR/$rel_path"
+# Recreate the prepared folder without modifying node_modules.
+rm -rf "$DEST"
+mkdir -p "$DEST"
+cp -a "$SOURCE_DIST/." "$DEST/"
+
+# Verify the required runtime assets.
+for file in tikzjax.min.js run-tex.js fonts.min.css core.dump.gz tex.wasm.gz; do
+    if [[ ! -f "$DEST/$file" ]]; then
+        echo "ERROR: Missing runtime asset: $DEST/$file"
+        exit 1
     fi
-  fi
 done
 
-# Clean up remaining empty subdirectories in source and the temp folder
-find "$SRC_DIR" -type d -empty -delete
-rm -rf "$TEMP_DIR"
+# Verify that the original gzip files are valid.
+gzip -t "$DEST/core.dump.gz"
+gzip -t "$DEST/tex.wasm.gz"
 
-echo "Processing and cleanup complete."
+echo "TikZJax runtime prepared from $SOURCE_DIST"
+echo "Destination: $DEST"

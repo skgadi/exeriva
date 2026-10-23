@@ -23,7 +23,8 @@
     "typecheck": "vue-tsc --noEmit",
     "postinstall": "quasar prepare --silent",
     "build-pwa": "quasar build -m pwa",
-    "sendToDocs": "quasar build -m pwa && node -e \"const fs=require('fs');fs.rmSync('../docs',{recursive:true,force:true});fs.cpSync('dist/pwa','../docs',{recursive:true})\""
+    "prepare:tikzjax": "bash public/tikzjax/prepare-tikzjax-folder.sh",
+    "sendToDocs": "pnpm prepare:tikzjax && quasar build -m pwa && node -e \"const fs=require('fs');fs.rmSync('../docs',{recursive:true,force:true});fs.cpSync('dist/pwa','../docs',{recursive:true});fs.writeFileSync('../docs/.nojekyll','')\""
   },
   "dependencies": {
     "@codemirror/lang-markdown": "^6.5.2",
