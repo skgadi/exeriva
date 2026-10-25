@@ -6,11 +6,13 @@ export const useAppSettingsStore = defineStore("appSettings", {
     isSideBarOpen: false,
     pinPreview: true,
     pinnedPreviewSize: 50,
+    sidebarWidth: 300,
+    scratchpadWidth: 360,
+    isScratchpadOpen: false,
   }),
 
   getters: {
     isSideBarClosed: (state) => !state.isSideBarOpen,
-
   },
 
   actions: {
@@ -18,7 +20,6 @@ export const useAppSettingsStore = defineStore("appSettings", {
       this.isSideBarOpen = !this.isSideBarOpen;
     },
   },
-
 });
 
 if (import.meta.hot) {

@@ -16,16 +16,31 @@
         icon="mdi-send-outline"
         @click="submitAnswerSheet(answerSheet)"
       />
+      <q-btn
+        :disable="answerSheet.state.isSubmitted"
+        push
+        no-caps
+        color="secondary"
+        label="Show Scratchpad"
+        icon="mdi-pencil"
+        @click="showScratchpad = true"
+      />
     </template>
   </div>
+  <q-dialog v-model="showScratchpad" persistent>
+    <ScratchPad />
+  </q-dialog>
 </template>
 <script setup lang="ts">
 const answerSheet = defineModel({
   type: Object as PropType<GSK_ANSWER_TO_QUESTION_PAPER>,
   required: true
 });
+import ScratchPad from "@/components/ExtrasForQuasar/ScratchPad.vue";
 
 import type { GSK_ANSWER_TO_QUESTION_PAPER } from "@/library/types/answers";
-import { PropType } from "vue";
+import { type PropType, ref } from "vue";
 import { submitAnswerSheet } from "@/services/app-utils/variables/submission";
+
+const showScratchpad = ref(false);
 </script>
