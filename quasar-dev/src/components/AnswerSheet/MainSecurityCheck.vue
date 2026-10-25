@@ -1,6 +1,6 @@
 <template>
   <template v-if="!hasRightToViewAnswerSheet">
-    <div class="useful-width q-px-md q-pt-xl q-pb-lg">
+    <div class="useful-width">
       <div class="q-gutter-md row justify-center">
         You are not allowed to view this answer sheet. Please make sure you are
         logged in with the correct user to continue to answer this question
@@ -9,7 +9,7 @@
     </div>
   </template>
   <template v-else-if="!isPasswordMatching">
-    <div class="useful-width q-px-md q-pt-xl q-pb-lg">
+    <div class="useful-width">
       <div class="q-gutter-md row justify-center">
         <password-input
           v-model="passwordToViewAnswerSheet"
