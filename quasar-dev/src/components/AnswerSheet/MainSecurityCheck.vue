@@ -9,7 +9,7 @@
     </div>
   </template>
   <template v-else-if="!isPasswordMatching">
-    <div class="useful-width">
+    <div class="useful-width q-pt-lg">
       <div class="q-gutter-md row justify-center">
         <password-input
           v-model="passwordToViewAnswerSheet"

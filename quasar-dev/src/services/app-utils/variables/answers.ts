@@ -7,6 +7,7 @@ import type {
 import { generateRandomNumber } from "@/services/app-utils/variables/generator";
 import { evaluateExpression } from "@/services/app-utils/variables/evaluate-expressions";
 import { updateSolutionVariables } from "@/services/app-utils/variables/handle-variable-manipulation";
+import type { GSK_ANSWER_TO_QUESTION_PAPER } from "@/library/types/answers";
 
 export const interpretUserInput = (input: string): math.MathNumericType => {
   try {
@@ -182,3 +183,84 @@ export const prepareQuestionPaperForAnswering = (
   }
   return fixedQuestionPaper;
 };
+
+const getViewedCount = (answerSheet: GSK_ANSWER_TO_QUESTION_PAPER): number => {
+  const getUniqueViewedQuestions = new Set<number>();
+  answerSheet.log.seen.forEach((seen) => {
+    getUniqueViewedQuestions.add(seen.element.questionIndex);
+  });
+  return getUniqueViewedQuestions.size;
+};
+
+const getAnsweredCount = (
+  answerSheet: GSK_ANSWER_TO_QUESTION_PAPER,
+): number => {
+  const getUniqueAnsweredQuestions = new Set<number>();
+  answerSheet.log.answered.forEach((answered) => {
+    getUniqueAnsweredQuestions.add(answered.element.questionIndex);
+  });
+  return getUniqueAnsweredQuestions.size;
+};
+
+const getSolutionViewedCount = (
+  answerSheet: GSK_ANSWER_TO_QUESTION_PAPER,
+): number => {
+  const getUniqueSolutionViewedQuestions = new Set<number>();
+  answerSheet.log.solutionSeen.forEach((solutionSeen) => {
+    getUniqueSolutionViewedQuestions.add(solutionSeen.questionIndex);
+  });
+  return getUniqueSolutionViewedQuestions.size;
+};
+
+export const getTotalQuestionsCount = (
+  answerSheet: GSK_ANSWER_TO_QUESTION_PAPER,
+): number => {
+  return answerSheet.questionPaper.questions.length;
+};
+
+export const getSessionCount = (
+  answerSheet: GSK_ANSWER_TO_QUESTION_PAPER,
+): number => {
+  return answerSheet.log.sessions.length;
+};
+
+export const updateAnswerSheetState = (
+  answerSheet: GSK_ANSWER_TO_QUESTION_PAPER,
+): void => {
+  const totalQuestions = getTotalQuestionsCount(answerSheet);
+  const answeredCount = getAnsweredCount(answerSheet);
+  const viewedCount = getViewedCount(answerSheet);
+  const solutionViewedCount = getSolutionViewedCount(answerSheet);
+
+  answerSheet.state.percentageFinished =
+    totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0;
+  answerSheet.state.percentageSeen =
+    totalQuestions > 0 ? (viewedCount / totalQuestions) * 100 : 0;
+  answerSheet.state.gradeInPercentage =
+    totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0;
+  answerSheet.state.percentageAnswered =
+    totalQuestions > 0 ? (answeredCount / totalQuestions) * 100 : 0;
+  answerSheet.state.percentageSolutionSeen =
+    totalQuestions > 0 ? (solutionViewedCount / totalQuestions) * 100 : 0;
+};
+
+export const isCurrentQuestionAnswered = (
+  answerSheet: GSK_ANSWER_TO_QUESTION_PAPER,
+): boolean => {
+  if (answerSheet.state.displayingQuestionIndex < 0 || answerSheet.state.displayingQuestionIndex >= getTotalQuestionsCount(answerSheet)) {
+    return false;
+  }
+  const currentQuestion = answerSheet.questionPaper.questions[answerSheet.state.displayingQuestionIndex];
+  if (!currentQuestion) {
+    return false;
+  }
+  return currentQuestion.question.variables.every((variable) => {
+    if (variable.type !== "expression") {
+      return true;
+    }
+    if (!variable.studentAnswer) {
+      return true;
+    }
+    return variable.studentAnswer.studentInput.trim() !== "";
+  });
+}

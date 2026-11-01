@@ -28,13 +28,14 @@ export const useAnswersStore = defineStore("answers", {
         questionPaper: prepareQuestionPaperForAnswering(questionPaper),
         state: {
           isSubmitted: false,
-          displayingQuestionIndex: 0,
+          displayingQuestionIndex: -1,
           percentageFinished: 0,
           percentageSeen: 0,
           gradeInPercentage: 0,
           percentageAnswered: 0,
           timeSpentInSeconds: 0,
           totalExpectedTimeInSeconds: 0,
+          percentageSolutionSeen: 0,
         },
         log: {
           answered: [],

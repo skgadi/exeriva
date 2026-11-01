@@ -36,11 +36,12 @@ export interface GSK_ANSWER_TO_QUESTION_PAPER {
   questionPaper: GSK_QUESTION_PAPER_DRAFT;
   state: {
     isSubmitted: boolean;
-    displayingQuestionIndex: number;
     percentageFinished: number;
     percentageSeen: number;
-    gradeInPercentage: number;
     percentageAnswered: number;
+    percentageSolutionSeen: number;
+    displayingQuestionIndex: number;
+    gradeInPercentage: number;
     timeSpentInSeconds: number;
     totalExpectedTimeInSeconds: number;
   };
