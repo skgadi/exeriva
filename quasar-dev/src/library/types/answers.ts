@@ -26,8 +26,8 @@ export interface GSK_SOLUTION_SEEN {
 }
 
 export interface GSK_ANSWERING_SESSION {
-  startTime: string;
-  endTime: string;
+  startTime: number; // Unix timestamp in milliseconds
+  endTime: number; // Unix timestamp in milliseconds
 }
 
 export interface GSK_ANSWER_TO_QUESTION_PAPER {

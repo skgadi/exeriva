@@ -99,16 +99,17 @@
 
     <q-page-container>
       <router-view />
+      <prepare-log />
     </q-page-container>
   </q-layout>
 </template>
 
 <script setup lang="ts">
-import { ref, onBeforeUnmount } from "vue";
+import { onBeforeUnmount } from "vue";
 
 import MainSideBar from "@/components/SideBar/MainComponent.vue";
-import PickUser from "@/components/SideBar/UserPicker.vue";
 import ScratchPad from "@/components/ExtrasForQuasar/ScratchPad.vue";
+import PrepareLog from "@/components/AnswerSheet/PrepareLog.vue";
 
 import appLogo from "@/assets/app-icon.png";
 
@@ -117,7 +118,6 @@ import { useUsersStore } from "@/stores/users-settings";
 
 const appSettings = useAppSettingsStore();
 const usersStore = useUsersStore();
-
 // Resize limits.
 const SIDEBAR_MIN = 220;
 const SIDEBAR_MAX = 520;

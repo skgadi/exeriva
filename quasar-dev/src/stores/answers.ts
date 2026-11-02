@@ -3,6 +3,7 @@ import { defineStore, acceptHMRUpdate } from "pinia";
 import type { GSK_ANSWER_TO_QUESTION_PAPER } from "@/library/types/answers";
 import type { GSK_QUESTION_PAPER_DRAFT } from "@/library/types/questions";
 import { prepareQuestionPaperForAnswering } from "@/services/app-utils/variables/answers";
+import { submitAnswerSheet } from "@/services/app-utils/variables/submission";
 
 export const useAnswersStore = defineStore("answers", {
   persist: true,
@@ -52,6 +53,45 @@ export const useAnswersStore = defineStore("answers", {
       id: string,
     ): GSK_ANSWER_TO_QUESTION_PAPER | undefined {
       return this.answers.find((a) => a.id === id);
+    },
+    startASession(answerId: string) {
+      const answerSheet = this.answers.find((a) => a.id === answerId);
+      if (!answerSheet) {
+        return;
+      }
+      // If answerSheet is submitted, then we do not create a new session.
+      if (answerSheet.state.isSubmitted) {
+        return;
+      }
+      // If the answer sheet is configured to be completed in one session only, then we do not create a new session.
+      if (
+        answerSheet.log.sessions.length > 0 &&
+        answerSheet.questionPaper.settings.finishInOneSession
+      ) {
+        // If the answer sheet is configured to be completed in one session only, then we do not create a new session.
+        // We submit the existing answer sheet.
+        submitAnswerSheet(answerSheet);
+        return;
+      }
+
+      answerSheet.log.sessions.push({
+        startTime: Date.now(),
+        endTime: -1, // -1 indicates that the session is still ongoing and has not ended yet.
+      });
+    },
+    closeASession(answerId: string) {
+      const answerSheet = this.answers.find((a) => a.id === answerId);
+      if (!answerSheet) {
+        return;
+      }
+      const lastSession = answerSheet.log.sessions.at(-1);
+      if (lastSession && lastSession.endTime === -1) {
+        lastSession.endTime = Date.now();
+      }
+      // If the answer sheet is configured to be completed in one session only, then we submit the answer sheet.
+      if (answerSheet.questionPaper.settings.finishInOneSession) {
+        submitAnswerSheet(answerSheet);
+      }
     },
   },
 });

@@ -39,6 +39,28 @@
           {{ getSessionCount(answerSheet) }}
         </q-avatar>
         Sessions
+        <q-menu>
+          <q-list dense bordered separator class="bg-grey-1">
+            <q-item
+              v-for="(session, index) in answerSheet.log.sessions
+                .slice()
+                .reverse()"
+              :key="index"
+            >
+              <q-item-section>
+                {{ new Date(session.startTime).toLocaleString() }} &emsp; -
+                &emsp;
+                {{
+                  session.endTime === -1
+                    ? index === 0
+                      ? "Ongoing"
+                      : "Not ended"
+                    : new Date(session.endTime).toLocaleString()
+                }}
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-menu>
       </q-chip>
     </div>
   </div>

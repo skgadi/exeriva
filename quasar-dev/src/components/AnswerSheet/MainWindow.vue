@@ -54,6 +54,7 @@
       <bottom-buttons v-model="answerSheet" />
     </main-security-check>
   </div>
+  <block-exit v-model="answerSheet" />
 </template>
 <script setup lang="ts">
 const answerSheet = defineModel({
@@ -61,6 +62,7 @@ const answerSheet = defineModel({
   required: true
 });
 
+import BlockExit from "@/components/AnswerSheet/BlockExit.vue";
 import MainSecurityCheck from "@/components/AnswerSheet/MainSecurityCheck.vue";
 import ViewQuestionElement from "@/components/AnswerSheet/ViewQuestionElement.vue";
 import AnsweringMain from "@/components/AnswerSheet/AnsweringMain.vue";
